@@ -1,87 +1,69 @@
-import React from 'react'
-import { useAragonApi } from '@aragon/api-react'
-import {
-  Box,
-  Button,
-  GU,
-  Header,
-  IconMinus,
-  IconPlus,
-  Main,
-  SyncIndicator,
-  Tabs,
-  Text,
-  textStyle,
-} from '@aragon/ui'
-import styled from 'styled-components'
+import React, { useState, useCallback } from 'react'
+import { useAragonApi, useGuiStyle } from '@aragon/api-react'
+import { Main, SyncIndicator, Header, Tabs, Button } from '@aragon/ui'
+import AccountsField from './AccountsField'
+
+const tabs = [
+  { name: 'Mint', id: 'mint' },
+  { name: 'Transfer', id: 'transfer' },
+]
 
 function App() {
-  const { api, appState, path, requestPath } = useAragonApi()
-  const { count, isSyncing } = appState
+  const { appState } = useAragonApi()
+  const { isSyncing } = appState
 
-  const pathParts = path.match(/^\/tab\/([0-9]+)/)
-  const pageIndex = Array.isArray(pathParts)
-    ? parseInt(pathParts[1], 10) - 1
-    : 0
+  const { appearance } = useGuiStyle()
+
+  const [selectedTab, setSelectedTab] = useState('mint')
+
+  const currentTab = tabs.find(t => t.id === selectedTab) || {}
+
+  const tabChangeHandler = useCallback(
+    index => {
+      const id = tabs[index].id
+      setSelectedTab(id)
+    },
+    [tabs]
+  )
+
+  const ScreenTab = ({ tabId }) => {
+    switch (tabId) {
+      case 'mint':
+        return <Mint />
+      case 'transfer':
+        return <Transfer />
+      default:
+        return null
+    }
+  }
 
   return (
-    <Main>
+    <Main theme={appearance}>
       {isSyncing && <SyncIndicator />}
-      <Header
-        primary="Counter"
-        secondary={
-          <Text
-            css={`
-              ${textStyle('title2')}
-            `}
-          >
-            {count}
-          </Text>
-        }
-      />
+      <Header primary="Transactions" />
       <Tabs
-        items={['Tab 1', 'Tab 2']}
-        selected={pageIndex}
-        onChange={index => requestPath(`/tab/${index + 1}`)}
+        items={tabs.map(t => t.name)}
+        selected={tabs.indexOf(currentTab)}
+        onChange={tabChangeHandler}
       />
-      <Box
-        css={`
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          height: ${50 * GU}px;
-          ${textStyle('title3')};
-        `}
-      >
-        Count: {count}
-        <Buttons>
-          <Button
-            display="icon"
-            icon={<IconMinus />}
-            label="Decrement"
-            onClick={() => api.decrement(1).toPromise()}
-          />
-          <Button
-            display="icon"
-            icon={<IconPlus />}
-            label="Increment"
-            onClick={() => api.increment(1).toPromise()}
-            css={`
-              margin-left: ${2 * GU}px;
-            `}
-          />
-        </Buttons>
-      </Box>
+      <ScreenTab tabId={currentTab.id} />
     </Main>
   )
 }
 
-const Buttons = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-  grid-gap: 40px;
-  margin-top: 20px;
-`
+const Mint = () => {
+  const [accounts, setAccounts] = useState()
+  return (
+    <>
+      <AccountsField accounts={accounts} onChange={setAccounts} />
+      <Button mode="strong" wide>
+        Send
+      </Button>
+    </>
+  )
+}
+const Transfer = () => {
+  return `Transfers not enabled yet.`
+}
 
 export default App
