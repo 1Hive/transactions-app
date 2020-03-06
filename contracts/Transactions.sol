@@ -4,7 +4,7 @@ import "@aragon/os/contracts/apps/AragonApp.sol";
 import "@aragon/os/contracts/lib/math/SafeMath.sol";
 
 
-contract CounterApp is AragonApp {
+contract Transactions is AragonApp {
     using SafeMath for uint256;
 
     /// Events

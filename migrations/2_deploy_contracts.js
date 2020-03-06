@@ -1,6 +1,6 @@
 /* global artifacts */
-var CounterApp = artifacts.require('CounterApp.sol')
+var Transactions = artifacts.require('Transactions.sol')
 
 module.exports = function(deployer) {
-  deployer.deploy(CounterApp)
+  deployer.deploy(Transactions)
 }

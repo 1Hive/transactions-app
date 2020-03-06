@@ -3,7 +3,7 @@ pragma solidity 0.4.24;
 import "@aragon/templates-shared/contracts/TokenCache.sol";
 import "@aragon/templates-shared/contracts/BaseTemplate.sol";
 
-import "./CounterApp.sol";
+import "./Transactions.sol";
 
 
 contract Template is BaseTemplate, TokenCache {
@@ -124,23 +124,23 @@ contract Template is BaseTemplate, TokenCache {
     )
         internal
     {
-        CounterApp app = _installCounterApp(_dao);
-        _createCounterAppPermissions(_acl, app, _voting, _voting);
+        Transactions app = _installTransactions(_dao);
+        _createTransactionsPermissions(_acl, app, _voting, _voting);
     }
 
-    function _installCounterApp(
+    function _installTransactions(
         Kernel _dao
     )
-        internal returns (CounterApp)
+        internal returns (Transactions)
     {
         bytes32 _appId = keccak256(abi.encodePacked(apmNamehash("open"), keccak256("transactions")));
-        bytes memory initializeData = abi.encodeWithSelector(CounterApp(0).initialize.selector);
-        return CounterApp(_installDefaultApp(_dao, _appId, initializeData));
+        bytes memory initializeData = abi.encodeWithSelector(Transactions(0).initialize.selector);
+        return Transactions(_installDefaultApp(_dao, _appId, initializeData));
     }
 
-    function _createCounterAppPermissions(
+    function _createTransactionsPermissions(
         ACL _acl,
-        CounterApp _app,
+        Transactions _app,
         address _grantee,
         address _manager
     )

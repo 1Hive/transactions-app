@@ -35,5 +35,5 @@
       "network": "mainnet"
     }
   },
-  "path": "contracts/CounterApp.sol"
+  "path": "contracts/Transactions.sol"
 }

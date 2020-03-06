@@ -4,7 +4,7 @@ const { assertRevert } = require('@aragon/test-helpers/assertThrow')
 const { hash } = require('eth-ens-namehash')
 const deployDAO = require('./helpers/deployDAO')
 
-const CounterApp = artifacts.require('CounterApp.sol')
+const Transactions = artifacts.require('Transactions.sol')
 
 const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff'
 
@@ -15,14 +15,14 @@ const getLog = (receipt, logName, argName) => {
 
 const deployedContract = receipt => getLog(receipt, 'NewAppProxy', 'proxy')
 
-contract('CounterApp', ([appManager, user]) => {
+contract('Transactions', ([appManager, user]) => {
   let INCREMENT_ROLE, DECREMENT_ROLE
   let appBase, app
 
   // eslint-disable-next-line no-undef
   before('deploy base app', async () => {
     // Deploy the app's base contract.
-    appBase = await CounterApp.new()
+    appBase = await Transactions.new()
 
     INCREMENT_ROLE = await appBase.INCREMENT_ROLE()
     DECREMENT_ROLE = await appBase.DECREMENT_ROLE()
@@ -39,7 +39,7 @@ contract('CounterApp', ([appManager, user]) => {
       false, // setDefault - Whether the app proxy is the default proxy.
       { from: appManager }
     )
-    app = await CounterApp.at(deployedContract(newAppInstanceReceipt))
+    app = await Transactions.at(deployedContract(newAppInstanceReceipt))
 
     // Set up the app's permissions.
     await acl.createPermission(
