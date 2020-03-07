@@ -52,7 +52,7 @@ function App() {
 }
 
 const Mint = () => {
-  const [accounts, setAccounts] = useState()
+  const [accounts, setAccounts] = useState([['', -1]])
   return (
     <>
       <AccountsField accounts={accounts} onChange={setAccounts} />
