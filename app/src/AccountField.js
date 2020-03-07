@@ -23,7 +23,7 @@ const AccountField = React.forwardRef(
   ({ index, account, hideRemoveButton, onUpdate, onRemove, onPaste }, ref) => {
     const fieldsLayout = useFieldsLayout()
 
-    const [address, stake] = account
+    const [address, stake = 0] = account
 
     const handleRemove = useCallback(() => {
       onRemove(index)
@@ -48,7 +48,8 @@ const AccountField = React.forwardRef(
       e => {
         e.preventDefault()
         onPaste(
-          e.clipboardData.getData('Text') ||
+          e.clipboardData.getData('text/csv') ||
+            e.clipboardData.getData('Text') ||
             e.clipboardData.getData('text/plain')
         )
       },
@@ -123,6 +124,7 @@ const AccountField = React.forwardRef(
         </div>
         <div>
           <TextInput
+            type="number"
             onChange={handleStakeChange}
             value={stake === -1 ? '' : stake}
             wide
