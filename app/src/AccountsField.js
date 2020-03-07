@@ -6,7 +6,7 @@ import { Button, Field, IconPlus, theme, textStyle, GU } from '@aragon/ui'
 
 import AccountField from './AccountField'
 
-import csvStringToArray from '../src/lib/csv-utils'
+import { csvStringToArray, fromLocalToNumber } from '../src/lib/csv-utils'
 
 function useFieldsLayout() {
   return `
@@ -72,6 +72,7 @@ const AccountsField = React.memo(
 
       const handlePaste = pasteData => {
         const accounts = csvStringToArray(pasteData)
+
         onChange(accounts)
       }
 
