@@ -6,7 +6,7 @@ import { Button, Field, IconPlus, theme, textStyle, GU } from '@aragon/ui'
 
 import AccountField from './AccountField'
 
-import { csvStringToArray, fromLocalToNumber } from '../src/lib/csv-utils'
+import { csvStringToArray } from '../src/lib/csv-utils'
 
 function useFieldsLayout() {
   return `
@@ -16,10 +16,13 @@ function useFieldsLayout() {
   `
 }
 
+const ACCOUNTS_SIZE = 2
+
 const AccountsField = React.memo(
   React.forwardRef(
     ({ accounts = [['', 0]], onChange = f => f, accountStake = 0 }, ref) => {
       const [focusLastAccountNext, setFocusLastAccountNext] = useState(false)
+      const [showDeleteAll, setShowDeleteAll] = useState(false)
 
       const accountsRef = useRef()
 
@@ -38,6 +41,10 @@ const AccountsField = React.memo(
         )
       }, [focusLastAccountNext])
 
+      const checkAccountsLength = useCallback(accounts => {
+        setShowDeleteAll(accounts.length >= ACCOUNTS_SIZE)
+      }, [])
+
       const focusLastAccount = useCallback(() => {
         setFocusLastAccountNext(true)
       }, [])
@@ -45,6 +52,7 @@ const AccountsField = React.memo(
       const addAccount = () => {
         // setFormError(null)
         onChange([...accounts, ['', accountStake]])
+        checkAccountsLength(accounts)
         focusLastAccount()
       }
 
@@ -57,7 +65,13 @@ const AccountsField = React.memo(
               [['', accountStake]]
             : accounts.filter((_, i) => i !== index)
         )
+        checkAccountsLength(accounts)
         focusLastAccount()
+      }
+
+      const removeAllAccounts = () => {
+        onChange([['', accountStake]])
+        setShowDeleteAll(false)
       }
 
       const hideRemoveButton = accounts.length < 2 && !accounts[0]
@@ -74,6 +88,7 @@ const AccountsField = React.memo(
         const accounts = csvStringToArray(pasteData)
 
         onChange(accounts)
+        checkAccountsLength(accounts)
       }
 
       return (
@@ -104,24 +119,40 @@ const AccountsField = React.memo(
               />
             ))}
           </div>
-          <Button
-            display="icon"
-            label="Add account"
-            size="small"
-            icon={
-              <IconPlus
-                css={`
-                  color: ${theme.accent};
-                `}
+          <Buttons>
+            <Button
+              display="icon"
+              label="Add account"
+              size="small"
+              icon={
+                <IconPlus
+                  css={`
+                    color: ${theme.accent};
+                  `}
+                />
+              }
+              onClick={addAccount}
+            />
+            {showDeleteAll && (
+              <Button
+                label="Delete all"
+                mode="negative"
+                size="small"
+                onClick={removeAllAccounts}
               />
-            }
-            onClick={addAccount}
-          />
+            )}
+          </Buttons>
         </Field>
       )
     }
   )
 )
+
+const Buttons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
 
 const InnerLabel = styled.div`
   text-transform: capitalize;
