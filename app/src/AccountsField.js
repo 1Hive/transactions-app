@@ -8,6 +8,9 @@ import AccountField from './AccountField'
 
 import { csvStringToArray } from '../src/lib/csv-utils'
 
+import { DEFAULT_STAKE } from './lib/account-utils'
+
+
 function useFieldsLayout() {
   return `
     display: grid;
@@ -16,10 +19,20 @@ function useFieldsLayout() {
   `
 }
 
+const ACCOUNTS_SIZE = 1
+
 const AccountsField = React.memo(
   React.forwardRef(
-    ({ accounts = [['', 0]], onChange = f => f, accountStake = 0 }, ref) => {
+    (
+      {
+        accounts = [['', DEFAULT_STAKE]],
+        onChange = f => f,
+        accountStake = DEFAULT_STAKE,
+      },
+      ref
+    ) => {
       const [focusLastAccountNext, setFocusLastAccountNext] = useState(false)
+      const [showDeleteAll, setShowDeleteAll] = useState(false)
 
       const accountsRef = useRef()
 
@@ -38,26 +51,36 @@ const AccountsField = React.memo(
         )
       }, [focusLastAccountNext])
 
+      const checkAccountsLength = useCallback(accounts => {
+        setShowDeleteAll(accounts.length > ACCOUNTS_SIZE)
+      }, [])
+
       const focusLastAccount = useCallback(() => {
         setFocusLastAccountNext(true)
       }, [])
 
       const addAccount = () => {
-        // setFormError(null)
-        onChange([...accounts, ['', accountStake]])
+        const newAccounts = [...accounts, ['', accountStake]]
+        onChange(newAccounts)
+        checkAccountsLength(newAccounts)
         focusLastAccount()
       }
 
       const removeAccount = index => {
-        // setFormError(null)
-        onChange(
+        const newAccounts =
           accounts.length < 2
             ? // When the remove button of the last field
               // gets clicked, we only empty the field.
               [['', accountStake]]
             : accounts.filter((_, i) => i !== index)
-        )
+        onChange(newAccounts)
+        checkAccountsLength(newAccounts)
         focusLastAccount()
+      }
+
+      const removeAllAccounts = () => {
+        onChange([['', accountStake]])
+        setShowDeleteAll(false)
       }
 
       const hideRemoveButton = accounts.length < 2 && !accounts[0]
@@ -70,9 +93,12 @@ const AccountsField = React.memo(
         )
       }
 
-      const handlePaste = pasteData => {
-        const accounts = csvStringToArray(pasteData)
-        onChange(accounts)
+      const handlePaste = (pasteData, fieldIndex) => {
+        const pasteAccounts = csvStringToArray(pasteData)
+        const newAccounts = [...accounts]
+        newAccounts.splice(fieldIndex, 1, ...pasteAccounts)
+        onChange(newAccounts)
+        checkAccountsLength(newAccounts)
       }
 
       return (
@@ -103,24 +129,39 @@ const AccountsField = React.memo(
               />
             ))}
           </div>
-          <Button
-            display="icon"
-            label="Add account"
-            size="small"
-            icon={
-              <IconPlus
-                css={`
-                  color: ${theme.accent};
-                `}
+          <Buttons>
+            <Button
+              label="Add more"
+              size="small"
+              icon={
+                <IconPlus
+                  css={`
+                    color: ${theme.accent};
+                  `}
+                />
+              }
+              onClick={addAccount}
+            />
+            {showDeleteAll && (
+              <Button
+                label="Delete all"
+                mode="negative"
+                size="small"
+                onClick={removeAllAccounts}
               />
-            }
-            onClick={addAccount}
-          />
+            )}
+          </Buttons>
         </Field>
       )
     }
   )
 )
+
+const Buttons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
 
 const InnerLabel = styled.div`
   text-transform: capitalize;

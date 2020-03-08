@@ -11,6 +11,8 @@ import {
   RADIUS,
 } from '@aragon/ui'
 
+import { DEFAULT_STAKE } from './lib/account-utils'
+
 function useFieldsLayout() {
   return `
     display: grid;
@@ -23,7 +25,7 @@ const AccountField = React.forwardRef(
   ({ index, account, hideRemoveButton, onUpdate, onRemove, onPaste }, ref) => {
     const fieldsLayout = useFieldsLayout()
 
-    const [address, stake = 0] = account
+    const [address, stake = DEFAULT_STAKE] = account
 
     const handleRemove = useCallback(() => {
       onRemove(index)
@@ -39,7 +41,7 @@ const AccountField = React.forwardRef(
     const handleStakeChange = useCallback(
       event => {
         const value = parseInt(event.target.value, 10)
-        onUpdate(index, address, isNaN(value) ? -1 : value)
+        onUpdate(index, address, isNaN(value) ? DEFAULT_STAKE : value)
       },
       [onUpdate, address, index]
     )
@@ -50,7 +52,8 @@ const AccountField = React.forwardRef(
         onPaste(
           e.clipboardData.getData('text/csv') ||
             e.clipboardData.getData('Text') ||
-            e.clipboardData.getData('text/plain')
+            e.clipboardData.getData('text/plain'),
+          index
         )
       },
       [onPaste]
@@ -108,7 +111,7 @@ const AccountField = React.forwardRef(
               left: ${1 * GU}px;
             `}
           >
-            {isAddress(account) ? (
+            {isAddress(address) ? (
               <EthIdenticon address={address} radius={RADIUS} />
             ) : (
               <div
@@ -126,7 +129,7 @@ const AccountField = React.forwardRef(
           <TextInput
             type="number"
             onChange={handleStakeChange}
-            value={stake === -1 ? '' : stake}
+            value={stake === null ? '' : stake}
             wide
           />
         </div>
