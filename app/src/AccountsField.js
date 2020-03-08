@@ -6,6 +6,8 @@ import { Button, Field, IconPlus, theme, textStyle, GU } from '@aragon/ui'
 
 import AccountField from './AccountField'
 
+import { csvStringToArray } from '../src/lib/csv-utils'
+
 function useFieldsLayout() {
   return `
     display: grid;
@@ -68,6 +70,11 @@ const AccountsField = React.memo(
         )
       }
 
+      const handlePaste = pasteData => {
+        const accounts = csvStringToArray(pasteData)
+        onChange(accounts)
+      }
+
       return (
         <Field
           label={
@@ -92,6 +99,7 @@ const AccountsField = React.memo(
                 onRemove={removeAccount}
                 hideRemoveButton={hideRemoveButton}
                 onUpdate={updateAccount}
+                onPaste={handlePaste}
               />
             ))}
           </div>

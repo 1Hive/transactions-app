@@ -20,10 +20,10 @@ function useFieldsLayout() {
 }
 
 const AccountField = React.forwardRef(
-  ({ index, account, hideRemoveButton, onUpdate, onRemove }, ref) => {
+  ({ index, account, hideRemoveButton, onUpdate, onRemove, onPaste }, ref) => {
     const fieldsLayout = useFieldsLayout()
 
-    const [address, stake] = account
+    const [address, stake = 0] = account
 
     const handleRemove = useCallback(() => {
       onRemove(index)
@@ -42,6 +42,18 @@ const AccountField = React.forwardRef(
         onUpdate(index, address, isNaN(value) ? -1 : value)
       },
       [onUpdate, address, index]
+    )
+
+    const handlePaste = useCallback(
+      e => {
+        e.preventDefault()
+        onPaste(
+          e.clipboardData.getData('text/csv') ||
+            e.clipboardData.getData('Text') ||
+            e.clipboardData.getData('text/plain')
+        )
+      },
+      [onPaste]
     )
 
     return (
@@ -82,6 +94,7 @@ const AccountField = React.forwardRef(
             onChange={handleAccountChange}
             placeholder="Ethereum address"
             value={address}
+            onPaste={handlePaste}
             wide
             css={`
               padding-left: ${4.5 * GU}px;
@@ -111,6 +124,7 @@ const AccountField = React.forwardRef(
         </div>
         <div>
           <TextInput
+            type="number"
             onChange={handleStakeChange}
             value={stake === -1 ? '' : stake}
             wide
