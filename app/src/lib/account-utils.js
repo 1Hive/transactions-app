@@ -14,12 +14,12 @@ export function validateAccounts(accounts) {
     return 'Some addresses are invalid'
 
   if (
-    accounts.some(([, stake]) => isNaN(stake) || stake !== null || stake === 0)
+    accounts.some(([, stake]) => isNaN(stake) || stake === null || stake === 0)
   ) {
     return 'Some balances are invalid.'
   }
 
   if (!validateDuplicateAddresses(accounts, isAddress)) {
-    return 'Sme addresses are duplicated.'
+    return 'Some addresses are duplicated.'
   }
 }

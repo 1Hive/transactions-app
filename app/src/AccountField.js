@@ -24,7 +24,6 @@ function useFieldsLayout() {
 const AccountField = React.forwardRef(
   ({ index, account, hideRemoveButton, onUpdate, onRemove, onPaste }, ref) => {
     const fieldsLayout = useFieldsLayout()
-
     const [address, stake = DEFAULT_STAKE] = account
 
     const handleRemove = useCallback(() => {
