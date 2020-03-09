@@ -78,8 +78,12 @@ contract Template is BaseTemplate, TokenCache {
 
         (Kernel dao, ACL acl) = _createDAO();
         (Voting voting) = _setupBaseApps(dao, acl, _holders, _stakes, _votingSettings);
+        _createEvmScriptsRegistryPermissions(acl, voting, voting);
         // Setup transactions app
         _setupCustomApp(dao, acl, voting);
+        MiniMeToken token = _createToken("Token 2", "TKN2", TOKEN_DECIMALS);
+        _cacheToken(token, msg.sender);
+        _setupBaseApps(dao, acl, _holders, _stakes, _votingSettings);
         _transferRootPermissionsFromTemplateAndFinalizeDAO(dao, voting);
     }
 
@@ -110,7 +114,6 @@ contract Template is BaseTemplate, TokenCache {
     )
         internal
     {
-        _createEvmScriptsRegistryPermissions(_acl, _voting, _voting);
         _createVotingPermissions(_acl, _voting, _voting, _tokenManager, _voting);
         _createTokenManagerPermissions(_acl, _tokenManager, _voting, _voting);
     }
