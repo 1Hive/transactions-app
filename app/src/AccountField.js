@@ -127,7 +127,6 @@ const AccountField = React.forwardRef(
         </div>
         <div>
           <TextInput
-            type="number"
             onChange={handleStakeChange}
             value={stake === null ? '' : stake}
             wide
