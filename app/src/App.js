@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { useGuiStyle } from '@aragon/api-react'
+import { useAragonApi, useGuiStyle } from '@aragon/api-react'
 import { Main, Header, Tabs, Button, IconError } from '@aragon/ui'
 import AccountsField from './AccountsField'
 

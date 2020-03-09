@@ -4,7 +4,7 @@ import tokenManagerAbi from '../abi/TokenManager.json'
 import tokenAbi from '../abi/minimeToken.json'
 
 const MINT_SIGNATURE = 'mint(address,uint256)'
-const BURN_SIGNATURE = 'burn(address,uint256)'
+// const BURN_SIGNATURE = 'burn(address,uint256)'
 
 export async function createTokenEVMScript(accounts, tokenManagerAddress) {
   const calldatum = await Promise.all([
