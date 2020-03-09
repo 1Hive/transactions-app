@@ -1,7 +1,7 @@
 {
   "name": "transactions",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create a vote with multiple token mintings or token transfers",
   "dependencies": {
     "@aragon/os": "^4.3.0"
   },
