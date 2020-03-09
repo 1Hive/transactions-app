@@ -117,8 +117,9 @@ const Mint = () => {
         onClick={handleSubmit}
         wide
         disabled={
-          accounts.filter(([address, amount]) => address && amount !== null)
-            .length === 0
+          accounts
+            .filter(([address, amount]) => address && amount !== null)
+            .length() > 0
         }
       >
         Send
