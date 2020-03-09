@@ -146,8 +146,7 @@ contract Template is BaseTemplate, TokenCache {
     )
         internal
     {
-        _acl.createPermission(_grantee, _app, _app.INCREMENT_ROLE(), _manager);
-        _acl.createPermission(ANY_ENTITY, _app, _app.DECREMENT_ROLE(), _manager);
+        _acl.createPermission(_grantee, _app, "0x0", _manager); // Dummy role
     }
 
     //--------------------------------------------------------------//

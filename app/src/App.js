@@ -1,14 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { useAragonApi, useGuiStyle } from '@aragon/api-react'
-import {
-  Main,
-  SyncIndicator,
-  Header,
-  Tabs,
-  Button,
-  IconError,
-} from '@aragon/ui'
+import { useGuiStyle } from '@aragon/api-react'
+import { Main, Header, Tabs, Button, IconError } from '@aragon/ui'
 import AccountsField from './AccountsField'
 
 import { DEFAULT_STAKE, validateAccounts } from './lib/account-utils'
@@ -19,9 +12,6 @@ const tabs = [
 ]
 
 function App() {
-  const { appState } = useAragonApi()
-  const { isSyncing } = appState
-
   const { appearance } = useGuiStyle()
 
   const [selectedTab, setSelectedTab] = useState('mint')
@@ -49,7 +39,6 @@ function App() {
 
   return (
     <Main theme={appearance}>
-      {isSyncing && <SyncIndicator />}
       <Header primary="Transactions" />
       <Tabs
         items={tabs.map(t => t.name)}

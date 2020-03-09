@@ -6,7 +6,7 @@ import { IdentityProvider } from './identity-manager'
 
 const reducer = state => {
   if (state === null) {
-    return { count: 0, isSyncing: true }
+    return {}
   }
   return state
 }
