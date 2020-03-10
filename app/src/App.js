@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import { useAragonApi, useGuiStyle } from '@aragon/api-react'
 import { Main, Header, Tabs, Button, IconError } from '@aragon/ui'

@@ -2,11 +2,23 @@ import React, { useState, useCallback, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import makeCancelable from 'makecancelable'
-import { Button, Field, IconPlus, theme, textStyle, GU } from '@aragon/ui'
+import {
+  Button,
+  Field,
+  IconPlus,
+  IconUpload,
+  theme,
+  textStyle,
+  GU,
+} from '@aragon/ui'
 
 import AccountField from './AccountField'
 
-import { csvStringToArray } from '../src/lib/csv-utils'
+import {
+  csvStringToArray,
+  readFile,
+  removeCSVHeaders,
+} from '../src/lib/csv-utils'
 import { DEFAULT_STAKE } from './lib/account-utils'
 
 function useFieldsLayout() {
@@ -92,11 +104,22 @@ const AccountsField = React.memo(
       }
 
       const handlePaste = (pasteData, fieldIndex) => {
-        const pasteAccounts = csvStringToArray(pasteData)
+        let pasteAccounts = csvStringToArray(pasteData)
+        if (pasteAccounts[0][1] === undefined) {
+          pasteAccounts = csvStringToArray(pasteData, ',')
+        }
         const newAccounts = [...accounts]
         newAccounts.splice(fieldIndex, 1, ...pasteAccounts)
+        if (newAccounts[newAccounts.length - 1][0] === '') {
+          newAccounts.pop() // Remove last empty element
+        }
         onChange(newAccounts)
         checkAccountsLength(newAccounts)
+      }
+
+      const handleImport = data => {
+        removeAllAccounts()
+        handlePaste(data, 0)
       }
 
       return (
@@ -128,18 +151,21 @@ const AccountsField = React.memo(
             ))}
           </div>
           <Buttons>
-            <Button
-              label="Add more"
-              size="small"
-              icon={
-                <IconPlus
-                  css={`
-                    color: ${theme.accent};
-                  `}
-                />
-              }
-              onClick={addAccount}
-            />
+            <span>
+              <Button
+                label="Add more"
+                size="small"
+                icon={
+                  <IconPlus
+                    css={`
+                      color: ${theme.accent};
+                    `}
+                  />
+                }
+                onClick={addAccount}
+              />
+              <ImportButton handleImport={handleImport} />
+            </span>
             {showDeleteAll && (
               <Button
                 label="Delete all"
@@ -154,6 +180,37 @@ const AccountsField = React.memo(
     }
   )
 )
+
+const ImportButton = ({ handleImport = f => f }) => {
+  const fileInput = useRef(null)
+  const handleChange = async file => {
+    const csv = removeCSVHeaders(await readFile(file))
+    handleImport(csv)
+  }
+  const handleClick = () => fileInput.current.click()
+  return (
+    <>
+      <Button
+        onClick={handleClick}
+        size="small"
+        label="Import"
+        icon={
+          <IconUpload
+            css={`
+              color: ${theme.accent};
+            `}
+          />
+        }
+      />
+      <input
+        ref={fileInput}
+        css={{ display: 'none' }}
+        type="file"
+        onChange={e => handleChange(e.target.files[0])}
+      />
+    </>
+  )
+}
 
 const Buttons = styled.div`
   display: flex;
