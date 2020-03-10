@@ -1,15 +1,8 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import {
-  TextInput,
-  IconRemove,
-  Button,
-  EthIdenticon,
-  theme,
-  isAddress,
-  GU,
-  RADIUS,
-} from '@aragon/ui'
+import { TextInput, IconRemove, Button, GU } from '@aragon/ui'
+
+import LocalIdentitiesAutoComplete from './components/LocalIdentitiesAutoComplete/LocalIdentitiesAutoComplete'
 
 import { DEFAULT_STAKE } from './lib/account-utils'
 
@@ -31,8 +24,8 @@ const AccountField = React.forwardRef(
     }, [onRemove, index])
 
     const handleAccountChange = useCallback(
-      event => {
-        onUpdate(index, event.target.value, stake)
+      value => {
+        onUpdate(index, value, stake)
       },
       [onUpdate, stake, index]
     )
@@ -44,6 +37,7 @@ const AccountField = React.forwardRef(
       },
       [onUpdate, address, index]
     )
+    const accountRef = useRef()
 
     const handlePaste = useCallback(
       e => {
@@ -58,6 +52,13 @@ const AccountField = React.forwardRef(
       [onPaste]
     )
 
+    useEffect(() => {
+      if (accountRef && accountRef.current) {
+        accountRef.current.placeholder = 'Ethereum address'
+        accountRef.current.addEventListener('paste', handlePaste)
+      }
+    }, [accountRef && accountRef.current])
+
     return (
       <div
         className="account"
@@ -67,13 +68,19 @@ const AccountField = React.forwardRef(
           margin-bottom: ${1.5 * GU}px;
         `}
       >
-        <div
-          css={`
-            position: relative;
-          `}
-        >
+        <LocalIdentitiesAutoComplete
+          ref={accountRef}
+          onChange={handleAccountChange}
+          value={address}
+          wide
+          required
+        />
+        <div>
           <TextInput
-            ref={ref}
+            type="number"
+            onChange={handleStakeChange}
+            value={stake === null ? '' : stake}
+            wide
             adornment={
               <Button
                 display="icon"
@@ -93,43 +100,6 @@ const AccountField = React.forwardRef(
             }
             adornmentPosition="end"
             adornmentSettings={{ width: 52, padding: 8 }}
-            onChange={handleAccountChange}
-            placeholder="Ethereum address"
-            value={address}
-            onPaste={handlePaste}
-            wide
-            css={`
-              padding-left: ${4.5 * GU}px;
-              width: 100%;
-            `}
-          />
-          <div
-            css={`
-              position: absolute;
-              top: ${1 * GU}px;
-              left: ${1 * GU}px;
-            `}
-          >
-            {isAddress(address) ? (
-              <EthIdenticon address={address} radius={RADIUS} />
-            ) : (
-              <div
-                css={`
-                  width: ${3 * GU}px;
-                  height: ${3 * GU}px;
-                  background: ${theme.disabled};
-                  border-radius: ${RADIUS}px;
-                `}
-              />
-            )}
-          </div>
-        </div>
-        <div>
-          <TextInput
-            type="number"
-            onChange={handleStakeChange}
-            value={stake === null ? '' : stake}
-            wide
           />
         </div>
       </div>

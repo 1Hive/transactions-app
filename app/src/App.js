@@ -85,9 +85,8 @@ const Mint = () => {
 
   const tokenManager = tokenManagerApps[tokenManagerIndex]
   const votingApp = votingApps[votingAppIndex]
-  console.log(tokenManager, votingApp)
 
-  const mintTokens = async () => {
+  const mintTokens = async accounts => {
     const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     const decimals = await tokenHandler.decimals().toPromise()
     const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
@@ -103,15 +102,37 @@ const Mint = () => {
     })
   }
 
-  const handleSubmit = () => {
+  const searchIdentity = async value => {
+    if (/^(0x)?[0-9a-f]{40}$/i.test(value)) {
+      return value
+    }
+    const exists = await api.searchIdentities(value).toPromise()
+    if (exists && exists.length === 1) {
+      const item = exists[0]
+      if (
+        item.name.toLowerCase() === value.toLowerCase() ||
+        item.address.toLowerCase() === value.toLowerCase()
+      ) {
+        return item.address
+      }
+    }
+    return value
+  }
+
+  const handleSubmit = async () => {
     const accountsErrors = []
-    const errorMsg = validateAccounts(accounts)
+    const identities = await Promise.all(
+      accounts.map(([identity]) => searchIdentity(identity))
+    )
+    const _accounts = accounts.map(([, amount], i) => [identities[i], amount])
+    console.log(_accounts)
+    const errorMsg = validateAccounts(_accounts)
     if (errorMsg) accountsErrors.push(errorMsg)
 
     if (accountsErrors.length) setErrors([...accountsErrors])
     else {
       setErrors([])
-      mintTokens()
+      mintTokens(_accounts)
     }
   }
 

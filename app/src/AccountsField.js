@@ -73,7 +73,9 @@ const AccountsField = React.memo(
         const newAccounts = [...accounts, ['', accountStake]]
         onChange(newAccounts)
         checkAccountsLength(newAccounts)
-        focusLastAccount()
+        setTimeout(() => {
+          focusLastAccount()
+        }, 0)
       }
 
       const removeAccount = index => {
@@ -83,14 +85,20 @@ const AccountsField = React.memo(
               // gets clicked, we only empty the field.
               [['', accountStake]]
             : accounts.filter((_, i) => i !== index)
-        onChange(newAccounts)
-        checkAccountsLength(newAccounts)
-        focusLastAccount()
+        removeAllAccounts()
+        // We force rerendering because AccountFields use index as key
+        setTimeout(() => {
+          onChange(newAccounts)
+          checkAccountsLength(newAccounts)
+        }, 0)
       }
 
       const removeAllAccounts = () => {
         onChange([['', accountStake]])
         setShowDeleteAll(false)
+        setTimeout(() => {
+          focusLastAccount()
+        }, 0)
       }
 
       const hideRemoveButton = accounts.length < 2 && !accounts[0]
