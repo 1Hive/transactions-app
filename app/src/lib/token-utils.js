@@ -25,11 +25,50 @@ export async function createTokenEVMScript(accounts, tokenManagerAddress) {
   return script
 }
 
+/**
+ * Get the whole and decimal parts from a number.
+ * Trims leading and trailing zeroes.
+ *
+ * @param {string} num the number
+ * @returns {Array<string>} array with the [<whole>, <decimal>] parts of the number
+ */
+function splitDecimalNumber(num) {
+  const [whole = '', dec = ''] = num.split('.')
+  return [
+    whole.replace(/^0*/, ''), // trim leading zeroes
+    dec.replace(/0*$/, ''), // trim trailing zeroes
+  ]
+}
+
+/**
+ * Format the number to be in a given decimal base
+ *
+ * @param {string} num the number
+ * @param {number} decimals number of decimal places
+ * @param {Object} [options] options object
+ * @param {bool} [options.truncate=true] Should the number be truncated to its decimal base
+ * @returns {string} formatted number
+ */
+function toDecimals(num, decimals, { truncate = true } = {}) {
+  const [whole, dec] = splitDecimalNumber(num)
+  if (!whole && (!dec || !decimals)) {
+    return '0'
+  }
+
+  const wholeLengthWithBase = whole.length + decimals
+  const withoutDecimals = (whole + dec).padEnd(wholeLengthWithBase, '0')
+  const wholeWithBase = withoutDecimals.slice(0, wholeLengthWithBase)
+
+  if (!truncate && wholeWithBase.length < withoutDecimals.length) {
+    return `${wholeWithBase}.${withoutDecimals.slice(wholeLengthWithBase)}`
+  }
+  return wholeWithBase
+}
+
 export function addDecimalsToAccountsAmounts(accounts, decimals) {
-  const tokenDecimalsBase = new BN(10).pow(new BN(decimals))
   return accounts.map(([address, amount]) => {
-    const bnAmount = new BN(amount).mul(tokenDecimalsBase).toString()
-    return [address, bnAmount]
+    console.log(amount, decimals, toDecimals(amount, parseInt(decimals)))
+    return [address, toDecimals(amount, parseInt(decimals))]
   })
 }
 

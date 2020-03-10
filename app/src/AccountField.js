@@ -32,7 +32,7 @@ const AccountField = React.forwardRef(
 
     const handleStakeChange = useCallback(
       event => {
-        const value = parseInt(event.target.value, 10)
+        const value = parseFloat(event.target.value, 10)
         onUpdate(index, address, isNaN(value) ? DEFAULT_STAKE : value)
       },
       [onUpdate, address, index]
