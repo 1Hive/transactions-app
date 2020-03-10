@@ -57,7 +57,7 @@ const AccountField = React.forwardRef(
         accountRef.current.placeholder = 'Ethereum address'
         accountRef.current.addEventListener('paste', handlePaste)
       }
-    }, [accountRef && accountRef.current])
+    }, [accountRef && accountRef.current && accountRef.current.placeholder])
 
     return (
       <div

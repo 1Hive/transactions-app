@@ -65,6 +65,10 @@ const AccountsField = React.memo(
         setShowDeleteAll(accounts.length > ACCOUNTS_SIZE)
       }, [])
 
+      useEffect(() => {
+        checkAccountsLength(accounts)
+      }, [accounts.length])
+
       const focusLastAccount = useCallback(() => {
         setFocusLastAccountNext(true)
       }, [])
@@ -72,7 +76,6 @@ const AccountsField = React.memo(
       const addAccount = () => {
         const newAccounts = [...accounts, ['', accountStake]]
         onChange(newAccounts)
-        checkAccountsLength(newAccounts)
         setTimeout(() => {
           focusLastAccount()
         }, 0)
@@ -89,7 +92,6 @@ const AccountsField = React.memo(
         // We force rerendering because AccountFields use index as key
         setTimeout(() => {
           onChange(newAccounts)
-          checkAccountsLength(newAccounts)
         }, 0)
       }
 
@@ -122,7 +124,6 @@ const AccountsField = React.memo(
           newAccounts.pop() // Remove last empty element
         }
         onChange(newAccounts)
-        checkAccountsLength(newAccounts)
       }
 
       const handleImport = data => {
