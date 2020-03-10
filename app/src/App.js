@@ -1,8 +1,18 @@
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useAragonApi, useGuiStyle } from '@aragon/api-react'
-import { Main, Header, Tabs, Button, IconError } from '@aragon/ui'
+import {
+  Main,
+  Header,
+  Tabs,
+  Button,
+  IconError,
+  DropDown,
+  textStyle,
+} from '@aragon/ui'
 import AccountsField from './AccountsField'
+
+import LocalAppBadge from './components/LocalIdentityBadge/LocalAppBadge'
 
 import { DEFAULT_STAKE, validateAccounts } from './lib/account-utils'
 import {
@@ -63,22 +73,29 @@ const Mint = () => {
   const [accounts, setAccounts] = useState([['', DEFAULT_STAKE]])
   const [errors, setErrors] = useState([])
 
-  const mintTokens = async () => {
-    const tmApp = installedApps.find(
-      ({ name }) => name.toLowerCase() === 'tokens'
-    )
-    const votingApps = installedApps.find(
-      ({ name }) => name.toLowerCase() === 'voting'
-    )
+  const [tokenManagerIndex, setTokenManager] = useState(0)
+  const [votingAppIndex, setVotingApp] = useState(0)
 
-    const tokenHandler = await getTokenHandler(api, tmApp.appAddress)
+  const tokenManagerApps = installedApps.filter(
+    ({ name }) => name.toLowerCase() === 'tokens'
+  )
+  const votingApps = installedApps.filter(
+    ({ name }) => name.toLowerCase() === 'voting'
+  )
+
+  const tokenManager = tokenManagerApps[tokenManagerIndex]
+  const votingApp = votingApps[votingAppIndex]
+  console.log(tokenManager, votingApp)
+
+  const mintTokens = async () => {
+    const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     const decimals = await tokenHandler.decimals().toPromise()
     const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
 
-    const votingHandler = api.external(votingApps.appAddress, votingAbi)
+    const votingHandler = api.external(votingApp.appAddress, votingAbi)
     const evmScript = await createTokenEVMScript(
       formattedAccounts,
-      tmApp.appAddress
+      tokenManager.appAddress
     )
 
     votingHandler.newVote(evmScript, 'Mint Tokens').subscribe(() => {
@@ -100,6 +117,19 @@ const Mint = () => {
 
   return (
     <>
+      <InnerLabel>Apps</InnerLabel>
+      <DropDowns>
+        <DropDown
+          items={formattedApps(tokenManagerApps)}
+          selected={tokenManagerIndex}
+          onChange={setTokenManager}
+        />
+        <DropDown
+          items={formattedApps(votingApps)}
+          selected={votingAppIndex}
+          onChange={setVotingApp}
+        />
+      </DropDowns>
       <AccountsField accounts={accounts} onChange={setAccounts} />
       <Button
         mode="strong"
@@ -136,6 +166,31 @@ const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
   color: red;
+`
+
+const StyledAppBadge = styled.div`
+  display: inline-flex;
+  margin-top: 5px;
+`
+
+const DropDowns = styled.div`
+  display: flex;
+  align-items: center;
+  padding-bottom: 15px;
+`
+
+const formattedApps = apps =>
+  apps.map((app, index) => {
+    return (
+      <StyledAppBadge>
+        <LocalAppBadge installedApp={app} />
+      </StyledAppBadge>
+    )
+  })
+
+const InnerLabel = styled.div`
+  text-transform: capitalize;
+  ${textStyle('label3')}
 `
 
 export default App

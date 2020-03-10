@@ -4,6 +4,7 @@ import web3EthAbiUntyped from 'web3-eth-abi'
 const web3EthAbi = web3EthAbiUntyped
 
 export function encodeCallScript(actions) {
+  console.log(actions)
   return actions.reduce((script, { to, calldata }) => {
     const addr = abi.rawEncode(['address'], [to]).toString('hex')
     const length = abi
@@ -16,6 +17,7 @@ export function encodeCallScript(actions) {
 }
 
 export function encodeActCall(signature, params) {
+
   const sigBytes = web3EthAbi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]
