@@ -1,3 +1,4 @@
+import BN from 'bn.js'
 import { encodeActCall, encodeCallScript } from './evmscripts-utils'
 
 import tokenManagerAbi from '../abi/TokenManager.json'
@@ -25,10 +26,11 @@ export async function createTokenEVMScript(accounts, tokenManagerAddress) {
 }
 
 export function addDecimalsToAccountsAmounts(accounts, decimals) {
-  return accounts.map(([address, amount]) => [
-    address,
-    (amount * Math.pow(10, decimals)).toString(),
-  ])
+  const tokenDecimalsBase = new BN(10).pow(new BN(decimals))
+  return accounts.map(([address, amount]) => {
+    const bnAmount = new BN(amount).mul(tokenDecimalsBase).toString()
+    return [address, bnAmount]
+  })
 }
 
 export async function getTokenHandler(api, tokenManagerAddress) {

@@ -125,7 +125,6 @@ const Mint = () => {
       accounts.map(([identity]) => searchIdentity(identity))
     )
     const _accounts = accounts.map(([, amount], i) => [identities[i], amount])
-    console.log(_accounts)
     const errorMsg = validateAccounts(_accounts)
     if (errorMsg) accountsErrors.push(errorMsg)
 
