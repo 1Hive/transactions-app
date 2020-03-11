@@ -5,7 +5,7 @@ import { DropDown, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
 import {
-  createTokenEVMScript,
+  createMintEVMScript,
   addDecimalsToAccountsAmounts,
   getTokenHandler,
 } from '../lib/token-utils'
@@ -37,7 +37,7 @@ export default function Mint() {
     const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
 
     const votingHandler = api.external(votingApp.appAddress, votingAbi)
-    const evmScript = await createTokenEVMScript(
+    const evmScript = await createMintEVMScript(
       formattedAccounts,
       tokenManager.appAddress
     )

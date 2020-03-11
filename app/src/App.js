@@ -38,7 +38,7 @@ function App() {
 
   return (
     <Main theme={appearance}>
-      <Header primary="Transactfdsfons" />
+      <Header primary="Transactions" />
       <Tabs
         items={tabs.map(t => t.name)}
         selected={tabs.indexOf(currentTab)}

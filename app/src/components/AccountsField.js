@@ -136,7 +136,7 @@ const AccountsField = React.memo(
                 ${fieldsLayout}
               `}
             >
-              <InnerLabel>Mint to</InnerLabel>
+              <InnerLabel>Recipients</InnerLabel>
               <InnerLabel>Amount</InnerLabel>
             </div>
           }

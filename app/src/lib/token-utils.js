@@ -7,7 +7,9 @@ import tokenAbi from '../abi/minimeToken.json'
 const MINT_SIGNATURE = 'mint(address,uint256)'
 // const BURN_SIGNATURE = 'burn(address,uint256)'
 
-export async function createTokenEVMScript(accounts, tokenManagerAddress) {
+const PAYMENT_SIGNATURE = 'newImmediatePayment(address,address,uint256,string)'
+
+export async function createMintEVMScript(accounts, tokenManagerAddress) {
   const calldatum = await Promise.all([
     ...accounts.map(([receiverAddress, amount]) =>
       encodeActCall(MINT_SIGNATURE, [receiverAddress, amount])
@@ -18,6 +20,29 @@ export async function createTokenEVMScript(accounts, tokenManagerAddress) {
     to: tokenManagerAddress,
     calldata,
   }))
+
+  // Encode all actions into a single EVM script.
+  const script = encodeCallScript(actions)
+
+  return script
+}
+
+export async function createTransferEVMScript(payments, financeAppAddress) {
+  const calldatum = await Promise.all(
+    payments.map(({ tokenAddress, receiverAddress, amount, reference = '' }) =>
+      encodeActCall(PAYMENT_SIGNATURE, [
+        tokenAddress,
+        receiverAddress,
+        amount,
+        reference,
+      ])
+    )
+  )
+  const actions = calldatum.map(calldata => ({
+    to: financeAppAddress,
+    calldata,
+  }))
+
 
   // Encode all actions into a single EVM script.
   const script = encodeCallScript(actions)
@@ -49,7 +74,7 @@ function splitDecimalNumber(num) {
  * @param {bool} [options.truncate=true] Should the number be truncated to its decimal base
  * @returns {string} formatted number
  */
-function toDecimals(num, decimals, { truncate = true } = {}) {
+export function toDecimals(num, decimals, { truncate = true } = {}) {
   const [whole, dec] = splitDecimalNumber(num)
   if (!whole && (!dec || !decimals)) {
     return '0'
