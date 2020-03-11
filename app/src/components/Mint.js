@@ -13,7 +13,7 @@ import {
 import votingAbi from '../abi/Voting.json'
 
 import MultiTransferForm from './MultiTransferForm'
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export default function Mint() {
   const { installedApps, api } = useAragonApi()
@@ -28,7 +28,7 @@ export default function Mint() {
     ({ name }) => name.toLowerCase() === 'voting'
   )
 
-  const mintTokens = async (accounts) => {
+  const mintTokens = async accounts => {
     const tokenManager = tokenManagerApps[tokenManagerIndex]
     const votingApp = votingApps[votingAppIndex]
 

@@ -1,4 +1,3 @@
-import BN from 'bn.js'
 import { encodeActCall, encodeCallScript } from './evmscripts-utils'
 
 import tokenManagerAbi from '../abi/TokenManager.json'
@@ -42,7 +41,6 @@ export async function createTransferEVMScript(payments, financeAppAddress) {
     to: financeAppAddress,
     calldata,
   }))
-
 
   // Encode all actions into a single EVM script.
   const script = encodeCallScript(actions)

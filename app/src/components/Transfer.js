@@ -4,10 +4,7 @@ import { useAragonApi } from '@aragon/api-react'
 import { DropDown, Field, TextInput, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
-import {
-  createTransferEVMScript,
-  toDecimals,
-} from '../lib/token-utils'
+import { createTransferEVMScript, toDecimals } from '../lib/token-utils'
 
 import votingAbi from '../abi/Voting.json'
 
@@ -46,7 +43,7 @@ export default function Transfer() {
     const financeApp = financeApps[financeAppIndex]
     const votingApp = votingApps[votingAppIndex]
 
-    const token = TOKENS[tokenIndex];
+    const token = TOKENS[tokenIndex]
 
     // const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     // const decimals = await tokenHandler.decimals().toPromise()
