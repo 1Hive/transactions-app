@@ -33,7 +33,7 @@ export async function createTokenEVMScript(accounts, tokenManagerAddress) {
  * @returns {Array<string>} array with the [<whole>, <decimal>] parts of the number
  */
 function splitDecimalNumber(num) {
-  const [whole = '', dec = ''] = num.split('.')
+  const [whole = '', dec = ''] = String(num).split('.')
   return [
     whole.replace(/^0*/, ''), // trim leading zeroes
     dec.replace(/0*$/, ''), // trim trailing zeroes
