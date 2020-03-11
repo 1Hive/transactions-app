@@ -14,11 +14,7 @@ import {
 
 import AccountField from './AccountField'
 
-import {
-  csvStringToArray,
-  readFile,
-  removeCSVHeaders,
-} from '../lib/csv-utils'
+import { csvStringToArray, readFile, removeCSVHeaders } from '../lib/csv-utils'
 import { DEFAULT_STAKE } from '../lib/account-utils'
 
 function useFieldsLayout() {
