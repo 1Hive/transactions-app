@@ -18,8 +18,8 @@ import {
   csvStringToArray,
   readFile,
   removeCSVHeaders,
-} from '../src/lib/csv-utils'
-import { DEFAULT_STAKE } from './lib/account-utils'
+} from '../lib/csv-utils'
+import { DEFAULT_STAKE } from '../lib/account-utils'
 
 function useFieldsLayout() {
   return `

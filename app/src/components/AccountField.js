@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { TextInput, IconRemove, Button, GU } from '@aragon/ui'
 
-import LocalIdentitiesAutoComplete from './components/LocalIdentitiesAutoComplete/LocalIdentitiesAutoComplete'
+import LocalIdentitiesAutoComplete from './LocalIdentitiesAutoComplete/LocalIdentitiesAutoComplete'
 
-import { DEFAULT_STAKE } from './lib/account-utils'
+import { DEFAULT_STAKE } from '../lib/account-utils'
 
 function useFieldsLayout() {
   return `
