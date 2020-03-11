@@ -2,10 +2,8 @@ import React, { useState } from 'react'
 
 import styled from 'styled-components'
 import { useAragonApi } from '@aragon/api-react'
-import { Button, IconError, DropDown, textStyle } from '@aragon/ui'
+import { Button, IconError } from '@aragon/ui'
 import AccountsField from './AccountsField'
-
-import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
 import { DEFAULT_STAKE, validateAccounts } from '../lib/account-utils'
 
@@ -27,20 +25,10 @@ const searchIdentity = async (api, value) => {
 }
 
 export default function MultiTransferForm({ onSubmit }) {
-  const { installedApps, api } = useAragonApi()
+  const { api } = useAragonApi()
 
   const [accounts, setAccounts] = useState([['', DEFAULT_STAKE]])
   const [errors, setErrors] = useState([])
-
-  const [tokenManagerIndex, setTokenManager] = useState(0)
-  const [votingAppIndex, setVotingApp] = useState(0)
-
-  const tokenManagerApps = installedApps.filter(
-    ({ name }) => name.toLowerCase() === 'tokens'
-  )
-  const votingApps = installedApps.filter(
-    ({ name }) => name.toLowerCase() === 'voting'
-  )
 
   const handleSubmit = async () => {
     const accountsErrors = []
@@ -55,29 +43,13 @@ export default function MultiTransferForm({ onSubmit }) {
     else {
       setErrors([])
 
-      const tokenManager = tokenManagerApps[tokenManagerIndex]
-      const votingApp = votingApps[votingAppIndex]
-
-      await onSubmit(_accounts, tokenManager, votingApp)
+      await onSubmit(_accounts)
       setAccounts([['', DEFAULT_STAKE]])
     }
   }
 
   return (
     <>
-      <InnerLabel>Apps</InnerLabel>
-      <DropDowns>
-        <DropDown
-          items={formattedApps(tokenManagerApps)}
-          selected={tokenManagerIndex}
-          onChange={setTokenManager}
-        />
-        <DropDown
-          items={formattedApps(votingApps)}
-          selected={votingAppIndex}
-          onChange={setVotingApp}
-        />
-      </DropDowns>
       <AccountsField accounts={accounts} onChange={setAccounts} />
       <Button
         mode="strong"
@@ -111,29 +83,4 @@ const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
   color: red;
-`
-
-const DropDowns = styled.div`
-  display: flex;
-  align-items: center;
-  padding-bottom: 15px;
-`
-
-const formattedApps = apps =>
-  apps.map((app, index) => {
-    return (
-      <StyledAppBadge>
-        <LocalAppBadge installedApp={app} />
-      </StyledAppBadge>
-    )
-  })
-
-const InnerLabel = styled.div`
-  text-transform: capitalize;
-  ${textStyle('label3')}
-`
-
-const StyledAppBadge = styled.div`
-  display: inline-flex;
-  margin-top: 5px;
 `
