@@ -14,12 +14,8 @@ import {
 
 import AccountField from './AccountField'
 
-import {
-  csvStringToArray,
-  readFile,
-  removeCSVHeaders,
-} from '../src/lib/csv-utils'
-import { DEFAULT_STAKE } from './lib/account-utils'
+import { csvStringToArray, readFile, removeCSVHeaders } from '../lib/csv-utils'
+import { DEFAULT_STAKE } from '../lib/account-utils'
 
 function useFieldsLayout() {
   return `
@@ -140,7 +136,7 @@ const AccountsField = React.memo(
                 ${fieldsLayout}
               `}
             >
-              <InnerLabel>Mint to</InnerLabel>
+              <InnerLabel>Recipients</InnerLabel>
               <InnerLabel>Amount</InnerLabel>
             </div>
           }
