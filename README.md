@@ -2,9 +2,9 @@
 
 1Hive's Transactions app allows users to create a vote with multiple token mintings or token transfers.
 
-#### 🐲 Project Stage: development
+#### 🐲 Project Stage: Mainnet
 
-The Transactiosn app is still in development. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
+The Redemptions app has been published to `open.aragonpm.eth` on Mainnet and Rinkeby networks. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
 
 #### 🚨 Security Review Status: pre-audit
 
@@ -44,12 +44,42 @@ npm run start:ipfs:template
 
 ## How to deploy to an organization
 
-Transactions app will be published to APM on Mainnet and Rinkeby at `transactions.open.aragonpm.eth`
+Transactions app are published to APM on Mainnet and Rinkeby at `transactions.open.aragonpm.eth`
 
-To deploy to an Aragon DAO you can use the [Aragon CLI](https://hack.aragon.org/docs/cli-intro.html).
+To deploy to an Aragon DAO you can use the [Aragon CLI](https://hack.aragon.org/docs/cli-intro.html), and follow these steps.
 
 ```
-aragon dao install <dao-address> transactions.open.aragonpm.eth
+# setup your environment
+env="--environment aragon:mainnet --ipfs-rpc https://ipfs.eth.aragon.network/ipfs/"
+
+# set a variable for your DAO
+dao=<your_dao_address>
+
+# set a variable for the voting app
+voting=0x35b74057a93280eb57f9863298f6a6908b38898a
+
+# install the app to the DAO
+aragon dao install $dao transactions.open.aragonpm.eth $env
+
+# go to https://mainnet.aragon.org/#/<your-dao-address>/<your-voting-app-address>
+# and vote on the installation 
+
+# check the DAO to get the proxy address of the new app
+dao apps $dao --all $env
+
+# set a variable for the address of the proxy of the new app
+app=<transactions_app_proxy_address_goes_here>
+
+# we need to set up any permission for the app to wire it into the DAO
+# (this makes it show up in the UI).
+# Note: We assign to $voting the app's DUMMY_ROLE and set up
+
+aragon dao acl create $dao $app DUMMY_ROLE $voting $voting $env
+
+# go back again to https://mainnet.aragon.org/#/<your-dao-address>/<your-voting-app-address>
+# and vote on the permission assignation. When it's done, you will see the Transactions
+# app appear in the apps' sidebar.
+
 ```
 
 <br />
