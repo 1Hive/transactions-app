@@ -8,6 +8,7 @@ import React, {
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import makeCancelable from 'makecancelable'
+import { v4 as uuidv4 } from 'uuid';
 import {
   Button,
   Field,
@@ -15,7 +16,6 @@ import {
   IconUpload,
   theme,
   textStyle,
-  GU,
   IconError,
 } from '@aragon/ui'
 import { useAragonApi } from '@aragon/api-react'
@@ -30,20 +30,34 @@ import {
   validateAddresses,
 } from '../lib/transfer-utils'
 
+function initTransferItems() {
+  return [{
+    ...DEFAULT_TRANSFER,
+    id: uuidv4(),
+  }]
+}
+
 function transferItemsReducer(state, { type, payload }) {
   switch (type) {
     case 'ADD': {
-      const maxId = state.map(t => t.id).reduce((a, b) => Math.max(a, b), 0)
-
       const lastItem = state[state.length - 1]
 
       return [
         ...state,
         {
+          ...DEFAULT_TRANSFER,
           ...lastItem,
+          id: uuidv4(),
           account: '',
-          id: maxId + 1,
         },
+      ]
+    }
+    case 'APPEND': {
+      const { transferItems } = payload
+
+      return [
+        ...state,
+        ...transferItems,
       ]
     }
     case 'UPDATE': {
@@ -59,13 +73,13 @@ function transferItemsReducer(state, { type, payload }) {
     case 'REMOVE': {
       const { transferItem } = payload
       if (state.length === 1) {
-        return [DEFAULT_TRANSFER]
+        return initTransferItems()
       } else {
         return state.filter(t => t !== transferItem)
       }
     }
     case 'REMOVE_ALL': {
-      return [DEFAULT_TRANSFER]
+      return initTransferItems()
     }
     default: {
       return state
@@ -79,9 +93,7 @@ const TransferItems = React.memo(
     const accountsRef = useRef()
     const fieldsLayout = useFieldsLayout(tokens)
 
-    const [transferItems, setTransferItems] = useReducer(transferItemsReducer, [
-      DEFAULT_TRANSFER,
-    ])
+    const [transferItems, setTransferItems] = useReducer(transferItemsReducer, null, initTransferItems)
     const errors = validateFormItems(transferItems)
     const [addressErrors, setAddressErrors] = useState([])
     const showDeleteAll = transferItems.length > 1
@@ -149,24 +161,52 @@ const TransferItems = React.memo(
       }
     }
 
-    // TODO broken
-    // const handlePaste = index => (pasteData) => {
-    //   let pasteAccounts = csvStringToArray(pasteData)
-    //   if (pasteAccounts[0][1] === undefined) {
-    //     pasteAccounts = csvStringToArray(pasteData, ',')
-    //   }
-    //   const newAccounts = [...transferItems]
-    //   newAccounts.splice(index, 1, ...pasteAccounts)
-    //   if (newAccounts[newAccounts.length - 1][0] === '') {
-    //     newAccounts.pop() // Remove last empty element
-    //   }
-    //   setTransferItems(newAccounts)
-    // }
+    const handlePaste = transferItem => pasteData => {
+      try {
+        let parsedItems = csvStringToArray(pasteData)
+        if (parsedItems[0][1] === undefined) {
+          parsedItems = csvStringToArray(pasteData, ',')
+        }
+        if (parsedItems.length === 1 && parsedItems[0].length === 1)
+          throw new Error('just string')
 
-    // const handleImport = data => {
-    //   removeAllAccounts()
-    //   handlePaste(data, 0)
-    // }
+        if (parsedItems[0].length !== (tokens ? 3 : 2))
+          throw new Error('invalid row length')
+
+        const appendItems = parsedItems.map((row, index) => ({
+          id: uuidv4(),
+          account: row[0],
+          amount: row[1],
+          tokenIndex:
+            tokens && tokens.findIndex(token => token.symbol === row[2]),
+        }))
+        setTransferItems({
+          type: 'APPEND',
+          payload: {
+            transferItems: appendItems,
+          },
+        })
+
+        if(transferItem) {
+          setTransferItems({
+            type: 'REMOVE',
+            payload: {
+              transferItem,
+            },
+          })
+        }
+        return true
+      } catch (e) {
+        console.error('parse paste invalid', e)
+        return false
+      }
+    }
+
+    const handleImport = data => {
+      console.log(data);
+      removeAllAccounts()
+      handlePaste()(data)
+    }
 
     useEffect(() => {
       return makeCancelable(
@@ -196,8 +236,8 @@ const TransferItems = React.memo(
               `}
             >
               <InnerLabel>Recipients</InnerLabel>
-              {tokens && <InnerLabel>Token</InnerLabel>}
               <InnerLabel>Amount</InnerLabel>
+              {tokens && <InnerLabel>Token</InnerLabel>}
             </div>
           }
         >
@@ -208,7 +248,7 @@ const TransferItems = React.memo(
                 transferItem={transferItem}
                 onRemove={removeAccount(transferItem)}
                 onUpdate={updateAccount(transferItem)}
-                // onPaste={handlePaste(index)}
+                onPaste={handlePaste(transferItem)}
                 tokens={tokens}
               />
             ))}
@@ -227,7 +267,7 @@ const TransferItems = React.memo(
                 }
                 onClick={addAccount}
               />
-              {/* <ImportButton handleImport={handleImport} /> */}
+              <ImportButton handleImport={handleImport} />
             </span>
             {showDeleteAll && (
               <Button

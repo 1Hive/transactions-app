@@ -53,24 +53,25 @@ const TransferItem = React.forwardRef(
     )
     const accountRef = useRef()
 
-    // const handlePaste = useCallback(
-    //   e => {
-    //     e.preventDefault()
-    //     onPaste(
-    //       e.clipboardData.getData('text/csv') ||
-    //       e.clipboardData.getData('Text') ||
-    //       e.clipboardData.getData('text/plain')
-    //     )
-    //   },
-    //   [onPaste]
-    // )
+    const handlePaste = useCallback(
+      e => {
+        const captured = onPaste(
+          e.clipboardData.getData('text/csv') ||
+          e.clipboardData.getData('Text') ||
+          e.clipboardData.getData('text/plain')
+        )
+        if(captured) e.preventDefault()
+      },
+      [onPaste]
+    )
 
-    // useEffect(() => {
-    //   if (accountRef && accountRef.current) {
-    //     accountRef.current.placeholder = 'Ethereum address'
-    //     accountRef.current.addEventListener('paste', handlePaste)
-    //   }
-    // }, [accountRef && accountRef.current && accountRef.current.placeholder])
+    useEffect(() => {
+      if (accountRef && accountRef.current && !accountRef.current._pasteListened) {
+        accountRef.current.placeholder = 'Ethereum address'
+        accountRef.current.addEventListener('paste', handlePaste)
+        accountRef.current._pasteListened = true
+      }
+    }, [accountRef && accountRef.current])
 
     return (
       <div
@@ -88,13 +89,6 @@ const TransferItem = React.forwardRef(
           wide
           required
         />
-        {tokens && (
-          <DropDown
-            items={tokens.map(token => token.name)}
-            selected={tokenIndex}
-            onChange={handleTokenChange}
-          />
-        )}
         <div>
           <TextInput
             type="number"
@@ -120,6 +114,13 @@ const TransferItem = React.forwardRef(
             adornmentSettings={{ width: 52, padding: 8 }}
           />
         </div>
+        {tokens && (
+          <DropDown
+            items={tokens.map(token => token.symbol)}
+            selected={tokenIndex}
+            onChange={handleTokenChange}
+          />
+        )}
       </div>
     )
   }
@@ -128,7 +129,7 @@ const TransferItem = React.forwardRef(
 TransferItem.propTypes = {
   transferItem: PropTypes.shape({
     account: PropTypes.string,
-    amount: PropTypes.number,
+    amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,
   onRemove: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,

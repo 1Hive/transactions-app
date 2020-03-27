@@ -24,7 +24,7 @@ export function csvStringToArray(strData, strDelimiter = '\t') {
 
   // Keep looping over the regular expression matches
   // until we can no longer find a match.
-  while ((arrMatches = objPattern.exec(strData))) {
+  while ((arrMatches = objPattern.exec(strData.trim()))) {
     // Get the delimiter that was found.
     var strMatchedDelimiter = arrMatches[1]
 
@@ -56,8 +56,6 @@ export function csvStringToArray(strData, strDelimiter = '\t') {
     // it to the data array.
     arrData[arrData.length - 1].push(strMatchedValue)
   }
-
-  // TODO return object instead of array
 
   // Return the parsed data.
   return arrData

@@ -13,12 +13,12 @@ import styled from 'styled-components'
 
 const TOKENS = [
   {
-    name: 'ETH',
+    symbol: 'ETH',
     address: '0x0000000000000000000000000000000000000000',
     decimals: 18,
   },
   {
-    name: 'TKN',
+    symbol: 'TKN',
     address: '0xf2804D07A941F77F34EEEb252D172E4268d0e9D4',
     decimals: 18,
   },

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Create a vote with multiple token mintings or token transfers",
   "dependencies": {
-    "@aragon/os": "^4.3.0"
+    "@aragon/os": "^4.3.0",
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@aragon/apps-shared-minime": "^1.0.2",
