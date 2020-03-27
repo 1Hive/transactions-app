@@ -10,7 +10,7 @@ const PAYMENT_SIGNATURE = 'newImmediatePayment(address,address,uint256,string)'
 
 export async function createMintEVMScript(transferItems, tokenManagerAddress) {
   const calldatum = await Promise.all([
-    ...transferItems.map(({address, amount}) =>
+    ...transferItems.map(({ address, amount }) =>
       encodeActCall(MINT_SIGNATURE, [address, amount])
     ),
   ])

@@ -4,11 +4,11 @@ import { useAragonApi } from '@aragon/api-react'
 import { DropDown, Field, TextInput, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
-import {createTransferEVMScript, toDecimals} from '../lib/token-utils'
+import { createTransferEVMScript, toDecimals } from '../lib/token-utils'
 
 import votingAbi from '../abi/Voting.json'
 
-import AccountsField from './AccountsField'
+import TransferItems from './TransferItems'
 import styled from 'styled-components'
 
 const TOKENS = [
@@ -92,10 +92,7 @@ export default function Transfer() {
           wide
         />
       </Field>
-      <AccountsField
-        onSubmit={transferTokens}
-        tokens={TOKENS}
-      />
+      <TransferItems onSubmit={transferTokens} tokens={TOKENS} />
     </>
   )
 }

@@ -12,7 +12,7 @@ import {
 
 import votingAbi from '../abi/Voting.json'
 
-import AccountsField from './AccountsField'
+import TransferItems from './TransferItems'
 import styled from 'styled-components'
 
 export default function Mint() {
@@ -38,7 +38,7 @@ export default function Mint() {
       address: item.address,
       amount: toDecimals(item.amount, decimals),
     }))
-    console.log(transferItems, mintings);
+    console.log(transferItems, mintings)
 
     const votingHandler = api.external(votingApp.appAddress, votingAbi)
     const evmScript = await createMintEVMScript(
@@ -68,7 +68,7 @@ export default function Mint() {
           onChange={setVotingApp}
         />
       </DropDowns>
-      <AccountsField onSubmit={mintTokens} />
+      <TransferItems onSubmit={mintTokens} />
     </>
   )
 }

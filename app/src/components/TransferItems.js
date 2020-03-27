@@ -1,4 +1,10 @@
-import React, { useReducer, useState, useCallback, useRef, useEffect } from 'react'
+import React, {
+  useReducer,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+} from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import makeCancelable from 'makecancelable'
@@ -12,9 +18,9 @@ import {
   GU,
   IconError,
 } from '@aragon/ui'
-import { useAragonApi } from '@aragon/api-react';
+import { useAragonApi } from '@aragon/api-react'
 
-import AccountField, { useFieldsLayout } from './AccountField'
+import TransferItem, { useFieldsLayout } from './TransferItem'
 
 import { csvStringToArray, readFile, removeCSVHeaders } from '../lib/csv-utils'
 import {
@@ -67,27 +73,28 @@ function transferItemsReducer(state, { type, payload }) {
   }
 }
 
-const AccountsField = React.memo(
+const TransferItems = React.memo(
   React.forwardRef(({ tokens, onSubmit }, ref) => {
     const { api } = useAragonApi()
     const accountsRef = useRef()
     const fieldsLayout = useFieldsLayout(tokens)
 
-    const [transferItems, setTransferItems] = useReducer(transferItemsReducer, [DEFAULT_TRANSFER])
+    const [transferItems, setTransferItems] = useReducer(transferItemsReducer, [
+      DEFAULT_TRANSFER,
+    ])
     const errors = validateFormItems(transferItems)
     const [addressErrors, setAddressErrors] = useState([])
     const showDeleteAll = transferItems.length > 1
 
-    // const [focusLastAccountNext, setFocusLastAccountNext] = useState(false)
-
+    const [focusLastAccountNext, setFocusLastAccountNext] = useState(false)
 
     const addAccount = () => {
       setTransferItems({
         type: 'ADD',
       })
-      // setTimeout(() => {
-      //   focusLastAccount()
-      // }, 0)
+      setTimeout(() => {
+        focusLastAccount()
+      }, 0)
     }
 
     const removeAccount = transferItem => () => {
@@ -103,9 +110,9 @@ const AccountsField = React.memo(
       setTransferItems({
         type: 'REMOVE_ALL',
       })
-      // setTimeout(() => {
-      //   focusLastAccount()
-      // }, 0)
+      setTimeout(() => {
+        focusLastAccount()
+      }, 0)
     }
 
     const updateAccount = transferItem => updatedTransferItem => {
@@ -136,7 +143,9 @@ const AccountsField = React.memo(
       } else {
         setAddressErrors([])
         await onSubmit(_transferItems)
-        setTransferItems([DEFAULT_TRANSFER])
+        setTransferItems({
+          type: 'REMOVE_ALL',
+        })
       }
     }
 
@@ -159,22 +168,22 @@ const AccountsField = React.memo(
     //   handlePaste(data, 0)
     // }
 
-    // useEffect(() => {
-    //   return makeCancelable(
-    //     new Promise(() => {
-    //       if (!focusLastAccountNext || !accountsRef.current) return
-    //       setFocusLastAccountNext(false)
-    //       const elts = accountsRef.current.querySelectorAll('.account')
-    //       if (elts.length > 0) {
-    //         elts[elts.length - 1].querySelector('input').focus()
-    //       }
-    //     })
-    //   )
-    // }, [focusLastAccountNext])
-    //
-    // const focusLastAccount = useCallback(() => {
-    //   setFocusLastAccountNext(true)
-    // }, [])
+    useEffect(() => {
+      return makeCancelable(
+        new Promise(() => {
+          if (!focusLastAccountNext || !accountsRef.current) return
+          setFocusLastAccountNext(false)
+          const elts = accountsRef.current.querySelectorAll('.account')
+          if (elts.length > 0) {
+            elts[elts.length - 1].querySelector('input').focus()
+          }
+        })
+      )
+    }, [focusLastAccountNext])
+
+    const focusLastAccount = useCallback(() => {
+      setFocusLastAccountNext(true)
+    }, [])
 
     return (
       <>
@@ -182,9 +191,9 @@ const AccountsField = React.memo(
           label={
             <div
               css={`
-              width: 100%;
-              ${fieldsLayout}
-            `}
+                width: 100%;
+                ${fieldsLayout}
+              `}
             >
               <InnerLabel>Recipients</InnerLabel>
               {tokens && <InnerLabel>Token</InnerLabel>}
@@ -194,7 +203,7 @@ const AccountsField = React.memo(
         >
           <div ref={accountsRef}>
             {transferItems.map((transferItem, index) => (
-              <AccountField
+              <TransferItem
                 key={transferItem.id}
                 transferItem={transferItem}
                 onRemove={removeAccount(transferItem)}
@@ -205,21 +214,21 @@ const AccountsField = React.memo(
             ))}
           </div>
           <Buttons>
-          <span>
-            <Button
-              label="Add more"
-              size="small"
-              icon={
-                <IconPlus
-                  css={`
-                    color: ${theme.accent};
-                  `}
-                />
-              }
-              onClick={addAccount}
-            />
-            {/*<ImportButton handleImport={handleImport} />*/}
-          </span>
+            <span>
+              <Button
+                label="Add more"
+                size="small"
+                icon={
+                  <IconPlus
+                    css={`
+                      color: ${theme.accent};
+                    `}
+                  />
+                }
+                onClick={addAccount}
+              />
+              {/* <ImportButton handleImport={handleImport} /> */}
+            </span>
             {showDeleteAll && (
               <Button
                 label="Delete all"
@@ -241,8 +250,8 @@ const AccountsField = React.memo(
         {errors && (
           <div
             css={`
-            margin-top: 2%;
-          `}
+              margin-top: 2%;
+            `}
           >
             {errors.concat(addressErrors).map((err, index) => (
               <ErrorMessage key={index}>
@@ -304,10 +313,9 @@ const ErrorMessage = styled.div`
   color: red;
 `
 
-AccountsField.propTypes = {
+TransferItems.propTypes = {
   transferItems: PropTypes.array,
   setTransferItems: PropTypes.func,
 }
 
-
-export default AccountsField
+export default TransferItems

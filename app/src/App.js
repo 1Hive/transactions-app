@@ -2,8 +2,8 @@ import React, { useState, useCallback } from 'react'
 import { useGuiStyle } from '@aragon/api-react'
 import { Main, Header, Tabs } from '@aragon/ui'
 
-import Mint from './components/Mint'
-import Transfer from './components/Transfer'
+import MintTab from './components/MintTab'
+import TransferTab from './components/TransferTab'
 
 const tabs = [
   { name: 'Mint', id: 'mint' },
@@ -13,9 +13,9 @@ const tabs = [
 const ScreenTab = ({ tabId }) => {
   switch (tabId) {
     case 'mint':
-      return <Mint />
+      return <MintTab />
     case 'transfer':
-      return <Transfer />
+      return <TransferTab />
     default:
       return null
   }
