@@ -10,6 +10,7 @@ export function useFieldsLayout(tokens) {
     columns += `${14 * GU}px`
   }
   columns += ` ${12 * GU}px`
+  columns += ` ${5 * GU}px`
 
   return `
     display: grid;
@@ -95,23 +96,6 @@ const TransferItem = React.forwardRef(
             onChange={handleAmountChange}
             value={amount || ''}
             wide
-            adornment={
-              <Button
-                display="icon"
-                icon={
-                  <IconRemove
-                    style={{
-                      color: 'red',
-                    }}
-                  />
-                }
-                label="Remove account"
-                onClick={() => onRemove()}
-                size="mini"
-              />
-            }
-            adornmentPosition="end"
-            adornmentSettings={{ width: 52, padding: 8 }}
           />
         </div>
         {tokens && (
@@ -121,6 +105,18 @@ const TransferItem = React.forwardRef(
             onChange={handleTokenChange}
           />
         )}
+        <Button
+          display="icon"
+          icon={
+            <IconRemove
+              style={{
+                color: 'red',
+              }}
+            />
+          }
+          label="Remove account"
+          onClick={() => onRemove()}
+        />
       </div>
     )
   }

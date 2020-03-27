@@ -238,6 +238,7 @@ const TransferItems = React.memo(
               <InnerLabel>Recipients</InnerLabel>
               <InnerLabel>Amount</InnerLabel>
               {tokens && <InnerLabel>Token</InnerLabel>}
+              <InnerLabel>Remove</InnerLabel>
             </div>
           }
         >
