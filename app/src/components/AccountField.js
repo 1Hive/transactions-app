@@ -4,8 +4,6 @@ import { TextInput, IconRemove, Button, GU } from '@aragon/ui'
 
 import LocalIdentitiesAutoComplete from './LocalIdentitiesAutoComplete/LocalIdentitiesAutoComplete'
 
-import { DEFAULT_STAKE } from '../lib/account-utils'
-
 function useFieldsLayout() {
   return `
     display: grid;
@@ -15,49 +13,49 @@ function useFieldsLayout() {
 }
 
 const AccountField = React.forwardRef(
-  ({ index, account, hideRemoveButton, onUpdate, onRemove, onPaste }, ref) => {
+  ({ transferItem, onUpdate, onRemove, onPaste }, ref) => {
     const fieldsLayout = useFieldsLayout()
-    const [address, stake = DEFAULT_STAKE] = account
-
-    const handleRemove = useCallback(() => {
-      onRemove(index)
-    }, [onRemove, index])
+    const { account, amount } = transferItem
 
     const handleAccountChange = useCallback(
       value => {
-        onUpdate(index, value, stake)
+        onUpdate({
+          ...transferItem,
+          account: value,
+        })
       },
-      [onUpdate, stake, index]
+      [onUpdate, transferItem]
     )
 
-    const handleStakeChange = useCallback(
+    const handleAmountChange = useCallback(
       event => {
-        const value = parseFloat(event.target.value, 10)
-        onUpdate(index, address, isNaN(value) ? DEFAULT_STAKE : value)
+        onUpdate({
+          ...transferItem,
+          amount: parseFloat(event.target.value, 10),
+        })
       },
-      [onUpdate, address, index]
+      [onUpdate, transferItem]
     )
     const accountRef = useRef()
 
-    const handlePaste = useCallback(
-      e => {
-        e.preventDefault()
-        onPaste(
-          e.clipboardData.getData('text/csv') ||
-            e.clipboardData.getData('Text') ||
-            e.clipboardData.getData('text/plain'),
-          index
-        )
-      },
-      [onPaste]
-    )
+    // const handlePaste = useCallback(
+    //   e => {
+    //     e.preventDefault()
+    //     onPaste(
+    //       e.clipboardData.getData('text/csv') ||
+    //       e.clipboardData.getData('Text') ||
+    //       e.clipboardData.getData('text/plain')
+    //     )
+    //   },
+    //   [onPaste]
+    // )
 
-    useEffect(() => {
-      if (accountRef && accountRef.current) {
-        accountRef.current.placeholder = 'Ethereum address'
-        accountRef.current.addEventListener('paste', handlePaste)
-      }
-    }, [accountRef && accountRef.current && accountRef.current.placeholder])
+    // useEffect(() => {
+    //   if (accountRef && accountRef.current) {
+    //     accountRef.current.placeholder = 'Ethereum address'
+    //     accountRef.current.addEventListener('paste', handlePaste)
+    //   }
+    // }, [accountRef && accountRef.current && accountRef.current.placeholder])
 
     return (
       <div
@@ -71,30 +69,28 @@ const AccountField = React.forwardRef(
         <LocalIdentitiesAutoComplete
           ref={accountRef}
           onChange={handleAccountChange}
-          value={address}
+          value={account}
           wide
           required
         />
         <div>
           <TextInput
             type="number"
-            onChange={handleStakeChange}
-            value={stake === null ? '' : stake}
+            onChange={handleAmountChange}
+            value={amount || ''}
             wide
             adornment={
               <Button
                 display="icon"
                 icon={
-                  !hideRemoveButton && (
-                    <IconRemove
-                      style={{
-                        color: 'red',
-                      }}
-                    />
-                  )
+                  <IconRemove
+                    style={{
+                      color: 'red',
+                    }}
+                  />
                 }
                 label="Remove account"
-                onClick={handleRemove}
+                onClick={() => onRemove()}
                 size="mini"
               />
             }
@@ -108,11 +104,10 @@ const AccountField = React.forwardRef(
 )
 
 AccountField.propTypes = {
-  hideRemoveButton: PropTypes.bool.isRequired,
-  index: PropTypes.number.isRequired,
-  account: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  ).isRequired,
+  transferItem: PropTypes.shape({
+    account: PropTypes.string,
+    amount: PropTypes.number,
+  }).isRequired,
   onRemove: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
 }

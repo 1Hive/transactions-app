@@ -5,60 +5,53 @@ import { useAragonApi } from '@aragon/api-react'
 import { Button, IconError } from '@aragon/ui'
 import AccountsField from './AccountsField'
 
-import { DEFAULT_STAKE, validateAccounts } from '../lib/account-utils'
-
-const searchIdentity = async (api, value) => {
-  if (/^(0x)?[0-9a-f]{40}$/i.test(value)) {
-    return value
-  }
-  const exists = await api.searchIdentities(value).toPromise()
-  if (exists && exists.length === 1) {
-    const item = exists[0]
-    if (
-      item.name.toLowerCase() === value.toLowerCase() ||
-      item.address.toLowerCase() === value.toLowerCase()
-    ) {
-      return item.address
-    }
-  }
-  return value
-}
+import {
+  DEFAULT_TRANSFER,
+  searchIdentity,
+  validateFormItems,
+  validateAddresses,
+} from '../lib/transfer-utils'
 
 export default function MultiTransferForm({ onSubmit }) {
   const { api } = useAragonApi()
 
-  const [accounts, setAccounts] = useState([['', DEFAULT_STAKE]])
-  const [errors, setErrors] = useState([])
+  const [transferItems, setTransferItems] = useState([DEFAULT_TRANSFER])
+  const errors = validateFormItems(transferItems)
+  const [addressErrors, setAddressErrors] = useState([])
 
   const handleSubmit = async () => {
-    const accountsErrors = []
-    const identities = await Promise.all(
-      accounts.map(([identity]) => searchIdentity(api, identity))
+    if (errors.length !== 0) return
+
+    const _transferItems = await Promise.all(
+      transferItems.map(async transferItem => ({
+        ...transferItem,
+        address: await searchIdentity(api, transferItem.account),
+      }))
     )
-    const _accounts = accounts.map(([, amount], i) => [identities[i], amount])
-    const errorMsg = validateAccounts(_accounts)
-    if (errorMsg) accountsErrors.push(errorMsg)
+    const addressErrors = validateAddresses(
+      _transferItems.map(({ address }) => address)
+    )
 
-    if (accountsErrors.length) setErrors([...accountsErrors])
-    else {
-      setErrors([])
-
-      await onSubmit(_accounts)
-      setAccounts([['', DEFAULT_STAKE]])
+    if (addressErrors.length > 0) {
+      setAddressErrors(addressErrors)
+    } else {
+      setAddressErrors([])
+      await onSubmit(_transferItems)
+      setTransferItems([DEFAULT_TRANSFER])
     }
   }
 
   return (
     <>
-      <AccountsField accounts={accounts} onChange={setAccounts} />
+      <AccountsField
+        transferItems={transferItems}
+        onChange={setTransferItems}
+      />
       <Button
         mode="strong"
         onClick={handleSubmit}
         wide
-        disabled={
-          !accounts.filter(([address, amount]) => address && amount !== null)
-            .length > 0
-        }
+        disabled={errors.length !== 0}
       >
         Send
       </Button>
@@ -68,7 +61,7 @@ export default function MultiTransferForm({ onSubmit }) {
             margin-top: 2%;
           `}
         >
-          {errors.map((err, index) => (
+          {errors.concat(addressErrors).map((err, index) => (
             <ErrorMessage key={index}>
               <IconError /> {err}
             </ErrorMessage>

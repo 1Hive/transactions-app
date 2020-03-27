@@ -4,7 +4,7 @@ import { useAragonApi } from '@aragon/api-react'
 import { DropDown, Field, TextInput, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
-import { createTransferEVMScript, toDecimals } from '../lib/token-utils'
+import {addDecimalsToTransferItems, createTransferEVMScript, toDecimals} from '../lib/token-utils'
 
 import votingAbi from '../abi/Voting.json'
 
@@ -18,9 +18,9 @@ const TOKENS = [
     decimals: 18,
   },
   {
-    name: 'PAC',
-    address: '0x94931A862d797E34C1218E51D770C4A03055d09f',
-    decimals: 2,
+    name: 'TKN',
+    address: '0xf2804D07A941F77F34EEEb252D172E4268d0e9D4',
+    decimals: 18,
   },
 ]
 
@@ -39,7 +39,7 @@ export default function Transfer() {
     ({ name }) => name.toLowerCase() === 'voting'
   )
 
-  const transferTokens = async accounts => {
+  const transferTokens = async transferItems => {
     const financeApp = financeApps[financeAppIndex]
     const votingApp = votingApps[votingAppIndex]
 
@@ -49,9 +49,12 @@ export default function Transfer() {
     // const decimals = await tokenHandler.decimals().toPromise()
     // const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
 
-    const payments = accounts.map(account => ({
-      receiverAddress: account[0],
-      amount: toDecimals(account[1], token.decimals),
+    const payments = addDecimalsToTransferItems(
+      transferItems,
+      token.decimals
+    ).map(transferItem => ({
+      receiverAddress: transferItem.address,
+      amount: transferItem.amount,
       tokenAddress: token.address,
       reference,
     }))

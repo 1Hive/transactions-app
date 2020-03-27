@@ -8,10 +8,10 @@ const MINT_SIGNATURE = 'mint(address,uint256)'
 
 const PAYMENT_SIGNATURE = 'newImmediatePayment(address,address,uint256,string)'
 
-export async function createMintEVMScript(accounts, tokenManagerAddress) {
+export async function createMintEVMScript(transferItems, tokenManagerAddress) {
   const calldatum = await Promise.all([
-    ...accounts.map(([receiverAddress, amount]) =>
-      encodeActCall(MINT_SIGNATURE, [receiverAddress, amount])
+    ...transferItems.map(({address, amount}) =>
+      encodeActCall(MINT_SIGNATURE, [address, amount])
     ),
   ])
 
@@ -88,11 +88,11 @@ export function toDecimals(num, decimals, { truncate = true } = {}) {
   return wholeWithBase
 }
 
-export function addDecimalsToAccountsAmounts(accounts, decimals) {
-  return accounts.map(([address, amount]) => {
-    console.log(amount, decimals, toDecimals(amount, parseInt(decimals)))
-    return [address, toDecimals(amount, parseInt(decimals))]
-  })
+export function addDecimalsToTransferItems(transferItems, decimals) {
+  return transferItems.map(({ amount, ...props }) => ({
+    ...props,
+    amount: toDecimals(amount, parseInt(decimals)),
+  }))
 }
 
 export async function getTokenHandler(api, tokenManagerAddress) {

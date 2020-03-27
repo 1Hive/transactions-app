@@ -6,7 +6,7 @@ import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
 import {
   createMintEVMScript,
-  addDecimalsToAccountsAmounts,
+  addDecimalsToTransferItems,
   getTokenHandler,
 } from '../lib/token-utils'
 
@@ -28,13 +28,16 @@ export default function Mint() {
     ({ name }) => name.toLowerCase() === 'voting'
   )
 
-  const mintTokens = async accounts => {
+  const mintTokens = async transferItems => {
     const tokenManager = tokenManagerApps[tokenManagerIndex]
     const votingApp = votingApps[votingAppIndex]
 
     const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     const decimals = await tokenHandler.decimals().toPromise()
-    const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
+    const formattedAccounts = addDecimalsToTransferItems(
+      transferItems,
+      decimals
+    )
 
     const votingHandler = api.external(votingApp.appAddress, votingAbi)
     const evmScript = await createMintEVMScript(

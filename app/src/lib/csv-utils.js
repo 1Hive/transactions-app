@@ -57,6 +57,8 @@ export function csvStringToArray(strData, strDelimiter = '\t') {
     arrData[arrData.length - 1].push(strMatchedValue)
   }
 
+  // TODO return object instead of array
+
   // Return the parsed data.
   return arrData
 }
