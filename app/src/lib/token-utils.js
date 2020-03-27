@@ -67,12 +67,13 @@ function splitDecimalNumber(num) {
  * Format the number to be in a given decimal base
  *
  * @param {string} num the number
- * @param {number} decimals number of decimal places
+ * @param {number} rawDecimals number of decimal places
  * @param {Object} [options] options object
  * @param {bool} [options.truncate=true] Should the number be truncated to its decimal base
  * @returns {string} formatted number
  */
-export function toDecimals(num, decimals, { truncate = true } = {}) {
+export function toDecimals(num, rawDecimals, { truncate = true } = {}) {
+  const decimals = parseInt(rawDecimals)
   const [whole, dec] = splitDecimalNumber(num)
   if (!whole && (!dec || !decimals)) {
     return '0'
@@ -86,13 +87,6 @@ export function toDecimals(num, decimals, { truncate = true } = {}) {
     return `${wholeWithBase}.${withoutDecimals.slice(wholeLengthWithBase)}`
   }
   return wholeWithBase
-}
-
-export function addDecimalsToTransferItems(transferItems, decimals) {
-  return transferItems.map(({ amount, ...props }) => ({
-    ...props,
-    amount: toDecimals(amount, parseInt(decimals)),
-  }))
 }
 
 export async function getTokenHandler(api, tokenManagerAddress) {

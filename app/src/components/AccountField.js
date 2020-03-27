@@ -1,21 +1,27 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { TextInput, IconRemove, Button, GU } from '@aragon/ui'
+import {TextInput, IconRemove, Button, GU, DropDown, Field} from '@aragon/ui'
 
 import LocalIdentitiesAutoComplete from './LocalIdentitiesAutoComplete/LocalIdentitiesAutoComplete'
 
-function useFieldsLayout() {
+export function useFieldsLayout(tokens) {
+  let columns = '';
+  if(tokens) {
+    columns += `${14 * GU}px`
+  }
+  columns += ` ${12 * GU}px`
+
   return `
     display: grid;
-    grid-template-columns: auto ${12 * GU}px;
+    grid-template-columns: auto ${columns};
     grid-column-gap: ${1.5 * GU}px;
   `
 }
 
 const AccountField = React.forwardRef(
-  ({ transferItem, onUpdate, onRemove, onPaste }, ref) => {
-    const fieldsLayout = useFieldsLayout()
-    const { account, amount } = transferItem
+  ({ transferItem, onUpdate, onRemove, onPaste, tokens }, ref) => {
+    const fieldsLayout = useFieldsLayout(tokens)
+    const { account, amount, tokenIndex } = transferItem
 
     const handleAccountChange = useCallback(
       value => {
@@ -32,6 +38,15 @@ const AccountField = React.forwardRef(
         onUpdate({
           ...transferItem,
           amount: parseFloat(event.target.value, 10),
+        })
+      },
+      [onUpdate, transferItem]
+    )
+    const handleTokenChange = useCallback(
+      value => {
+        onUpdate({
+          ...transferItem,
+          tokenIndex: value,
         })
       },
       [onUpdate, transferItem]
@@ -73,6 +88,11 @@ const AccountField = React.forwardRef(
           wide
           required
         />
+        {tokens && <DropDown
+          items={tokens.map(token => token.name)}
+          selected={tokenIndex}
+          onChange={handleTokenChange}
+        />}
         <div>
           <TextInput
             type="number"

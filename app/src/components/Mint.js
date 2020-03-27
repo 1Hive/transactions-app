@@ -6,13 +6,13 @@ import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
 import {
   createMintEVMScript,
-  addDecimalsToTransferItems,
+  toDecimals,
   getTokenHandler,
 } from '../lib/token-utils'
 
 import votingAbi from '../abi/Voting.json'
 
-import MultiTransferForm from './MultiTransferForm'
+import AccountsField from './AccountsField'
 import styled from 'styled-components'
 
 export default function Mint() {
@@ -34,14 +34,15 @@ export default function Mint() {
 
     const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     const decimals = await tokenHandler.decimals().toPromise()
-    const formattedAccounts = addDecimalsToTransferItems(
-      transferItems,
-      decimals
-    )
+    const mintings = transferItems.map(item => ({
+      address: item.address,
+      amount: toDecimals(item.amount, decimals),
+    }))
+    console.log(transferItems, mintings);
 
     const votingHandler = api.external(votingApp.appAddress, votingAbi)
     const evmScript = await createMintEVMScript(
-      formattedAccounts,
+      mintings,
       tokenManager.appAddress
     )
 
@@ -67,7 +68,7 @@ export default function Mint() {
           onChange={setVotingApp}
         />
       </DropDowns>
-      <MultiTransferForm onSubmit={mintTokens} />
+      <AccountsField onSubmit={mintTokens} />
     </>
   )
 }

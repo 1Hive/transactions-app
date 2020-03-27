@@ -4,6 +4,7 @@ export const DEFAULT_TRANSFER = {
   account: '',
   amount: 1,
   id: 0,
+  tokenIndex: 0,
 }
 
 export function validateAddresses(addresses) {

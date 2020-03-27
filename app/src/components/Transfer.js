@@ -4,11 +4,11 @@ import { useAragonApi } from '@aragon/api-react'
 import { DropDown, Field, TextInput, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
-import {addDecimalsToTransferItems, createTransferEVMScript, toDecimals} from '../lib/token-utils'
+import {createTransferEVMScript, toDecimals} from '../lib/token-utils'
 
 import votingAbi from '../abi/Voting.json'
 
-import MultiTransferForm from './MultiTransferForm'
+import AccountsField from './AccountsField'
 import styled from 'styled-components'
 
 const TOKENS = [
@@ -27,7 +27,6 @@ const TOKENS = [
 export default function Transfer() {
   const { installedApps, api } = useAragonApi()
 
-  const [tokenIndex, setTokenIndex] = useState(0)
   const [reference, setReference] = useState('')
   const [financeAppIndex, setFinanceApp] = useState(0)
   const [votingAppIndex, setVotingApp] = useState(0)
@@ -43,19 +42,17 @@ export default function Transfer() {
     const financeApp = financeApps[financeAppIndex]
     const votingApp = votingApps[votingAppIndex]
 
-    const token = TOKENS[tokenIndex]
-
     // const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     // const decimals = await tokenHandler.decimals().toPromise()
     // const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
 
-    const payments = addDecimalsToTransferItems(
-      transferItems,
-      token.decimals
-    ).map(transferItem => ({
+    const payments = transferItems.map(transferItem => ({
       receiverAddress: transferItem.address,
-      amount: transferItem.amount,
-      tokenAddress: token.address,
+      amount: toDecimals(
+        transferItem.amount,
+        TOKENS[transferItem.tokenIndex].decimals
+      ),
+      tokenAddress: TOKENS[transferItem.tokenIndex].address,
       reference,
     }))
 
@@ -87,13 +84,6 @@ export default function Transfer() {
           onChange={setVotingApp}
         />
       </DropDowns>
-      <Field label="Token">
-        <DropDown
-          items={TOKENS.map(token => token.name)}
-          selected={tokenIndex}
-          onChange={setTokenIndex}
-        />
-      </Field>
       <Field label="Reference">
         <TextInput
           type="text"
@@ -102,7 +92,10 @@ export default function Transfer() {
           wide
         />
       </Field>
-      <MultiTransferForm onSubmit={transferTokens} />
+      <AccountsField
+        onSubmit={transferTokens}
+        tokens={TOKENS}
+      />
     </>
   )
 }
