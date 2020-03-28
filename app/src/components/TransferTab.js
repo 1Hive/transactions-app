@@ -84,7 +84,7 @@ export default function Transfer() {
           onChange={setVotingApp}
         />
       </DropDowns>
-      <Field label="Reference">
+      <Field label="Reference (optional)">
         <TextInput
           type="text"
           value={reference}

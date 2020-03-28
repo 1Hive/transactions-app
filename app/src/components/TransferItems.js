@@ -8,7 +8,7 @@ import React, {
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import makeCancelable from 'makecancelable'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import {
   Button,
   Field,
@@ -31,10 +31,12 @@ import {
 } from '../lib/transfer-utils'
 
 function initTransferItems() {
-  return [{
-    ...DEFAULT_TRANSFER,
-    id: uuidv4(),
-  }]
+  return [
+    {
+      ...DEFAULT_TRANSFER,
+      id: uuidv4(),
+    },
+  ]
 }
 
 function transferItemsReducer(state, { type, payload }) {
@@ -55,10 +57,7 @@ function transferItemsReducer(state, { type, payload }) {
     case 'APPEND': {
       const { transferItems } = payload
 
-      return [
-        ...state,
-        ...transferItems,
-      ]
+      return [...state, ...transferItems]
     }
     case 'UPDATE': {
       const { transferItem, updatedTransferItem } = payload
@@ -93,7 +92,11 @@ const TransferItems = React.memo(
     const accountsRef = useRef()
     const fieldsLayout = useFieldsLayout(tokens)
 
-    const [transferItems, setTransferItems] = useReducer(transferItemsReducer, null, initTransferItems)
+    const [transferItems, setTransferItems] = useReducer(
+      transferItemsReducer,
+      null,
+      initTransferItems
+    )
     const errors = validateFormItems(transferItems)
     const [addressErrors, setAddressErrors] = useState([])
     const showDeleteAll = transferItems.length > 1
@@ -173,7 +176,7 @@ const TransferItems = React.memo(
         if (parsedItems[0].length !== (tokens ? 3 : 2))
           throw new Error('invalid row length')
 
-        const appendItems = parsedItems.map((row, index) => ({
+        const appendItems = parsedItems.map(row => ({
           id: uuidv4(),
           account: row[0],
           amount: row[1],
@@ -187,7 +190,7 @@ const TransferItems = React.memo(
           },
         })
 
-        if(transferItem) {
+        if (transferItem) {
           setTransferItems({
             type: 'REMOVE',
             payload: {
@@ -203,7 +206,7 @@ const TransferItems = React.memo(
     }
 
     const handleImport = data => {
-      console.log(data);
+      console.log(data)
       removeAllAccounts()
       handlePaste()(data)
     }
@@ -238,7 +241,6 @@ const TransferItems = React.memo(
               <InnerLabel>Recipients</InnerLabel>
               <InnerLabel>Amount</InnerLabel>
               {tokens && <InnerLabel>Token</InnerLabel>}
-              <InnerLabel>Remove</InnerLabel>
             </div>
           }
         >
@@ -355,8 +357,8 @@ const ErrorMessage = styled.div`
 `
 
 TransferItems.propTypes = {
-  transferItems: PropTypes.array,
-  setTransferItems: PropTypes.func,
+  tokens: PropTypes.bool,
+  onSubmit: PropTypes.func,
 }
 
 export default TransferItems

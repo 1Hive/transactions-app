@@ -1,21 +1,19 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { TextInput, IconRemove, Button, GU, DropDown, Field } from '@aragon/ui'
+import { TextInput, IconCross, Button, GU, DropDown } from '@aragon/ui'
 
 import LocalIdentitiesAutoComplete from './LocalIdentitiesAutoComplete/LocalIdentitiesAutoComplete'
 
 export function useFieldsLayout(tokens) {
-  let columns = ''
-  if (tokens) {
-    columns += `${14 * GU}px`
-  }
-  columns += ` ${12 * GU}px`
-  columns += ` ${5 * GU}px`
+  const columns = tokens
+    ? `auto ${12 * GU}px ${12 * GU}px ${5 * GU}px`
+    : `auto ${12 * GU}px ${5 * GU}px`
 
   return `
     display: grid;
-    grid-template-columns: auto ${columns};
+    grid-template-columns: ${columns};
     grid-column-gap: ${1.5 * GU}px;
+    align-items: center;
   `
 }
 
@@ -58,16 +56,20 @@ const TransferItem = React.forwardRef(
       e => {
         const captured = onPaste(
           e.clipboardData.getData('text/csv') ||
-          e.clipboardData.getData('Text') ||
-          e.clipboardData.getData('text/plain')
+            e.clipboardData.getData('Text') ||
+            e.clipboardData.getData('text/plain')
         )
-        if(captured) e.preventDefault()
+        if (captured) e.preventDefault()
       },
       [onPaste]
     )
 
     useEffect(() => {
-      if (accountRef && accountRef.current && !accountRef.current._pasteListened) {
+      if (
+        accountRef &&
+        accountRef.current &&
+        !accountRef.current._pasteListened
+      ) {
         accountRef.current.placeholder = 'Ethereum address'
         accountRef.current.addEventListener('paste', handlePaste)
         accountRef.current._pasteListened = true
@@ -108,13 +110,14 @@ const TransferItem = React.forwardRef(
         <Button
           display="icon"
           icon={
-            <IconRemove
+            <IconCross
               style={{
                 color: 'red',
               }}
             />
           }
           label="Remove account"
+          size="mini"
           onClick={() => onRemove()}
         />
       </div>
