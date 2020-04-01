@@ -4,7 +4,7 @@
 
 #### 🐲 Project Stage: Mainnet
 
-The Redemptions app has been published to `open.aragonpm.eth` on Mainnet and Rinkeby networks. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
+The Transactions app has been published to `open.aragonpm.eth` on Mainnet and Rinkeby networks. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
 
 #### 🚨 Security Review Status: pre-audit
 
