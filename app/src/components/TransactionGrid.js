@@ -97,13 +97,16 @@ const TransactionGrid = React.memo(
       null,
       initTransferItems
     )
+    const showDeleteAll = transactionItems.length > 1
+
     const errors = validateFormItems(transactionItems)
     const [addressErrors, setAddressErrors] = useState([])
-    const showDeleteAll = transactionItems.length > 1
+    const allErrors = errors.concat(addressErrors)
 
     const [focusLastAccountNext, setFocusLastAccountNext] = useState(false)
 
     const addAccount = () => {
+      setAddressErrors([])
       setTransferItems({
         type: 'ADD',
       })
@@ -113,6 +116,7 @@ const TransactionGrid = React.memo(
     }
 
     const removeAccount = transactionItem => () => {
+      setAddressErrors([])
       setTransferItems({
         type: 'REMOVE',
         payload: {
@@ -122,6 +126,7 @@ const TransactionGrid = React.memo(
     }
 
     const removeAllAccounts = () => {
+      setAddressErrors([])
       setTransferItems({
         type: 'REMOVE_ALL',
       })
@@ -131,6 +136,7 @@ const TransactionGrid = React.memo(
     }
 
     const updateAccount = transactionItem => updatedTransferItem => {
+      setAddressErrors([])
       setTransferItems({
         type: 'UPDATE',
         payload: {
@@ -292,13 +298,13 @@ const TransactionGrid = React.memo(
         >
           Send
         </Button>
-        {errors && (
+        {allErrors && allErrors.length > 0 && (
           <div
             css={`
               margin-top: 2%;
             `}
           >
-            {errors.concat(addressErrors).map((err, index) => (
+            {allErrors.map((err, index) => (
               <ErrorMessage key={index}>
                 <IconError /> {err}
               </ErrorMessage>

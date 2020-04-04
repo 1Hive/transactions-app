@@ -27,7 +27,7 @@ export function validateFormItems(transactionItems) {
   const errors = []
 
   if (transactionItems.some(({ account }) => !account))
-    errors.push('Some addresses are invalid')
+    errors.push('Some addresses are empty')
 
   if (
     transactionItems.some(
