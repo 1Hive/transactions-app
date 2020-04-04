@@ -18,37 +18,37 @@ export function useFieldsLayout(tokens) {
 }
 
 const TransactionRow = React.forwardRef(
-  ({ transferItem, onUpdate, onRemove, onPaste, tokens }, ref) => {
+  ({ transactionItem, onUpdate, onRemove, onPaste, tokens }, ref) => {
     const fieldsLayout = useFieldsLayout(tokens)
-    const { account, amount, tokenIndex } = transferItem
+    const { account, amount, tokenIndex } = transactionItem
 
     const handleAccountChange = useCallback(
       value => {
         onUpdate({
-          ...transferItem,
+          ...transactionItem,
           account: value,
         })
       },
-      [onUpdate, transferItem]
+      [onUpdate, transactionItem]
     )
 
     const handleAmountChange = useCallback(
       event => {
         onUpdate({
-          ...transferItem,
+          ...transactionItem,
           amount: parseFloat(event.target.value, 10),
         })
       },
-      [onUpdate, transferItem]
+      [onUpdate, transactionItem]
     )
     const handleTokenChange = useCallback(
       value => {
         onUpdate({
-          ...transferItem,
+          ...transactionItem,
           tokenIndex: value,
         })
       },
-      [onUpdate, transferItem]
+      [onUpdate, transactionItem]
     )
     const accountRef = useRef()
 
@@ -126,7 +126,7 @@ const TransactionRow = React.forwardRef(
 )
 
 TransactionRow.propTypes = {
-  transferItem: PropTypes.shape({
+  transactionItem: PropTypes.shape({
     account: PropTypes.string,
     amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }).isRequired,

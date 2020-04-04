@@ -22,15 +22,15 @@ export function validateAddresses(addresses) {
   return errors
 }
 
-export function validateFormItems(transferItems) {
+export function validateFormItems(transactionItems) {
   // TODO per-item errors
   const errors = []
 
-  if (transferItems.some(({ account }) => !account))
+  if (transactionItems.some(({ account }) => !account))
     errors.push('Some addresses are invalid')
 
   if (
-    transferItems.some(
+    transactionItems.some(
       ({ amount }) => isNaN(amount) || amount === null || amount === 0
     )
   ) {

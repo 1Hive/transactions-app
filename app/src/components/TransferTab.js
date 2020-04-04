@@ -19,7 +19,7 @@ const TOKENS = [
   },
   {
     symbol: 'TKN',
-    address: '0xf2804D07A941F77F34EEEb252D172E4268d0e9D4',
+    address: '0x862F57eDA3d93dCB6845D5fDc11098e921AFe38c',
     decimals: 18,
   },
 ]
@@ -38,7 +38,7 @@ export default function Transfer() {
     ({ name }) => name.toLowerCase() === 'voting'
   )
 
-  const transferTokens = async transferItems => {
+  const transferTokens = async transactionItems => {
     const financeApp = financeApps[financeAppIndex]
     const votingApp = votingApps[votingAppIndex]
 
@@ -46,13 +46,13 @@ export default function Transfer() {
     // const decimals = await tokenHandler.decimals().toPromise()
     // const formattedAccounts = addDecimalsToAccountsAmounts(accounts, decimals)
 
-    const payments = transferItems.map(transferItem => ({
-      receiverAddress: transferItem.address,
+    const payments = transactionItems.map(transactionItem => ({
+      receiverAddress: transactionItem.address,
       amount: toDecimals(
-        transferItem.amount,
-        TOKENS[transferItem.tokenIndex].decimals
+        transactionItem.amount,
+        TOKENS[transactionItem.tokenIndex].decimals
       ),
-      tokenAddress: TOKENS[transferItem.tokenIndex].address,
+      tokenAddress: TOKENS[transactionItem.tokenIndex].address,
       reference,
     }))
 

@@ -28,17 +28,17 @@ export default function Mint() {
     ({ name }) => name.toLowerCase() === 'voting'
   )
 
-  const mintTokens = async transferItems => {
+  const mintTokens = async transactionItems => {
     const tokenManager = tokenManagerApps[tokenManagerIndex]
     const votingApp = votingApps[votingAppIndex]
 
     const tokenHandler = await getTokenHandler(api, tokenManager.appAddress)
     const decimals = await tokenHandler.decimals().toPromise()
-    const mintings = transferItems.map(item => ({
+    const mintings = transactionItems.map(item => ({
       address: item.address,
       amount: toDecimals(item.amount, decimals),
     }))
-    console.log(transferItems, mintings)
+    console.log(transactionItems, mintings)
 
     const votingHandler = api.external(votingApp.appAddress, votingAbi)
     const evmScript = await createMintEVMScript(

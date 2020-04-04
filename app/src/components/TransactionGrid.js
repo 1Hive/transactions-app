@@ -55,13 +55,13 @@ function transferItemsReducer(state, { type, payload }) {
       ]
     }
     case 'APPEND': {
-      const { transferItems } = payload
+      const { transactionItems } = payload
 
-      return [...state, ...transferItems]
+      return [...state, ...transactionItems]
     }
     case 'UPDATE': {
-      const { transferItem, updatedTransferItem } = payload
-      const index = state.indexOf(transferItem)
+      const { transactionItem, updatedTransferItem } = payload
+      const index = state.indexOf(transactionItem)
 
       return [
         ...state.slice(0, index),
@@ -70,11 +70,11 @@ function transferItemsReducer(state, { type, payload }) {
       ]
     }
     case 'REMOVE': {
-      const { transferItem } = payload
+      const { transactionItem } = payload
       if (state.length === 1) {
         return initTransferItems()
       } else {
-        return state.filter(t => t !== transferItem)
+        return state.filter(t => t !== transactionItem)
       }
     }
     case 'REMOVE_ALL': {
@@ -92,14 +92,14 @@ const TransactionGrid = React.memo(
     const accountsRef = useRef()
     const fieldsLayout = useFieldsLayout(tokens)
 
-    const [transferItems, setTransferItems] = useReducer(
+    const [transactionItems, setTransferItems] = useReducer(
       transferItemsReducer,
       null,
       initTransferItems
     )
-    const errors = validateFormItems(transferItems)
+    const errors = validateFormItems(transactionItems)
     const [addressErrors, setAddressErrors] = useState([])
-    const showDeleteAll = transferItems.length > 1
+    const showDeleteAll = transactionItems.length > 1
 
     const [focusLastAccountNext, setFocusLastAccountNext] = useState(false)
 
@@ -112,11 +112,11 @@ const TransactionGrid = React.memo(
       }, 0)
     }
 
-    const removeAccount = transferItem => () => {
+    const removeAccount = transactionItem => () => {
       setTransferItems({
         type: 'REMOVE',
         payload: {
-          transferItem,
+          transactionItem,
         },
       })
     }
@@ -130,11 +130,11 @@ const TransactionGrid = React.memo(
       }, 0)
     }
 
-    const updateAccount = transferItem => updatedTransferItem => {
+    const updateAccount = transactionItem => updatedTransferItem => {
       setTransferItems({
         type: 'UPDATE',
         payload: {
-          transferItem,
+          transactionItem,
           updatedTransferItem,
         },
       })
@@ -144,9 +144,9 @@ const TransactionGrid = React.memo(
       if (errors.length !== 0) return
 
       const _transferItems = await Promise.all(
-        transferItems.map(async transferItem => ({
-          ...transferItem,
-          address: await searchIdentity(api, transferItem.account),
+        transactionItems.map(async transactionItem => ({
+          ...transactionItem,
+          address: await searchIdentity(api, transactionItem.account),
         }))
       )
       const addressErrors = validateAddresses(
@@ -164,7 +164,7 @@ const TransactionGrid = React.memo(
       }
     }
 
-    const handlePaste = transferItem => pasteData => {
+    const handlePaste = transactionItem => pasteData => {
       try {
         let parsedItems = csvStringToArray(pasteData)
         if (parsedItems[0][1] === undefined) {
@@ -186,15 +186,15 @@ const TransactionGrid = React.memo(
         setTransferItems({
           type: 'APPEND',
           payload: {
-            transferItems: appendItems,
+            transactionItems: appendItems,
           },
         })
 
-        if (transferItem) {
+        if (transactionItem) {
           setTransferItems({
             type: 'REMOVE',
             payload: {
-              transferItem,
+              transactionItem,
             },
           })
         }
@@ -245,13 +245,13 @@ const TransactionGrid = React.memo(
           }
         >
           <div ref={accountsRef}>
-            {transferItems.map((transferItem, index) => (
+            {transactionItems.map((transactionItem, index) => (
               <TransactionRow
-                key={transferItem.id}
-                transferItem={transferItem}
-                onRemove={removeAccount(transferItem)}
-                onUpdate={updateAccount(transferItem)}
-                onPaste={handlePaste(transferItem)}
+                key={transactionItem.id}
+                transactionItem={transactionItem}
+                onRemove={removeAccount(transactionItem)}
+                onUpdate={updateAccount(transactionItem)}
+                onPaste={handlePaste(transactionItem)}
                 tokens={tokens}
               />
             ))}
