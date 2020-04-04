@@ -17,7 +17,7 @@ export function useFieldsLayout(tokens) {
   `
 }
 
-const TransferItem = React.forwardRef(
+const TransactionRow = React.forwardRef(
   ({ transferItem, onUpdate, onRemove, onPaste, tokens }, ref) => {
     const fieldsLayout = useFieldsLayout(tokens)
     const { account, amount, tokenIndex } = transferItem
@@ -125,7 +125,7 @@ const TransferItem = React.forwardRef(
   }
 )
 
-TransferItem.propTypes = {
+TransactionRow.propTypes = {
   transferItem: PropTypes.shape({
     account: PropTypes.string,
     amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -134,4 +134,4 @@ TransferItem.propTypes = {
   onUpdate: PropTypes.func.isRequired,
 }
 
-export default TransferItem
+export default TransactionRow

@@ -8,7 +8,7 @@ import { createTransferEVMScript, toDecimals } from '../lib/token-utils'
 
 import votingAbi from '../abi/Voting.json'
 
-import TransferItems from './TransferItems'
+import TransactionGrid from './TransactionGrid'
 import styled from 'styled-components'
 
 const TOKENS = [
@@ -92,7 +92,7 @@ export default function Transfer() {
           wide
         />
       </Field>
-      <TransferItems onSubmit={transferTokens} tokens={TOKENS} />
+      <TransactionGrid onSubmit={transferTokens} tokens={TOKENS} />
     </>
   )
 }

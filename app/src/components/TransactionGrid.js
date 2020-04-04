@@ -20,7 +20,7 @@ import {
 } from '@aragon/ui'
 import { useAragonApi } from '@aragon/api-react'
 
-import TransferItem, { useFieldsLayout } from './TransferItem'
+import TransactionRow, { useFieldsLayout } from './TransactionRow'
 
 import { csvStringToArray, readFile, removeCSVHeaders } from '../lib/csv-utils'
 import {
@@ -86,7 +86,7 @@ function transferItemsReducer(state, { type, payload }) {
   }
 }
 
-const TransferItems = React.memo(
+const TransactionGrid = React.memo(
   React.forwardRef(({ tokens, onSubmit }, ref) => {
     const { api } = useAragonApi()
     const accountsRef = useRef()
@@ -246,7 +246,7 @@ const TransferItems = React.memo(
         >
           <div ref={accountsRef}>
             {transferItems.map((transferItem, index) => (
-              <TransferItem
+              <TransactionRow
                 key={transferItem.id}
                 transferItem={transferItem}
                 onRemove={removeAccount(transferItem)}
@@ -356,9 +356,9 @@ const ErrorMessage = styled.div`
   color: red;
 `
 
-TransferItems.propTypes = {
+TransactionGrid.propTypes = {
   tokens: PropTypes.bool,
   onSubmit: PropTypes.func,
 }
 
-export default TransferItems
+export default TransactionGrid

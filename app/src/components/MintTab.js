@@ -12,7 +12,7 @@ import {
 
 import votingAbi from '../abi/Voting.json'
 
-import TransferItems from './TransferItems'
+import TransactionGrid from './TransactionGrid'
 import styled from 'styled-components'
 
 export default function Mint() {
@@ -68,7 +68,7 @@ export default function Mint() {
           onChange={setVotingApp}
         />
       </DropDowns>
-      <TransferItems onSubmit={mintTokens} />
+      <TransactionGrid onSubmit={mintTokens} />
     </>
   )
 }
