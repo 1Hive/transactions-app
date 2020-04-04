@@ -171,10 +171,12 @@ const TransactionGrid = React.memo(
           parsedItems = csvStringToArray(pasteData, ',')
         }
         if (parsedItems.length === 1 && parsedItems[0].length === 1)
-          throw new Error('just string')
+          return false // data is just a normal string, just skip here and paste in input
 
         if (parsedItems[0].length !== (tokens ? 3 : 2))
-          throw new Error('invalid row length')
+          throw new Error(
+            'CSV rows have invalid length. Should have 2 elements for minting and 3 for token transfer (address, amount[, symbol])'
+          )
 
         const appendItems = parsedItems.map(row => ({
           id: uuidv4(),
@@ -198,7 +200,7 @@ const TransactionGrid = React.memo(
             },
           })
         }
-        return true
+        return true // confirm we handled the data and that the event propagtion should be stopped
       } catch (e) {
         console.error('parse paste invalid', e)
         return false
