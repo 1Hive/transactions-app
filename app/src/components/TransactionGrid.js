@@ -28,7 +28,7 @@ import {
   searchIdentity,
   validateFormItems,
   validateAddresses,
-} from '../lib/transfer-utils'
+} from '../lib/transactions-utils'
 
 function initTransferItems() {
   return [

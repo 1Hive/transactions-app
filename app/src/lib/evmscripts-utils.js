@@ -3,7 +3,7 @@ import web3EthAbiUntyped from 'web3-eth-abi'
 
 const web3EthAbi = web3EthAbiUntyped
 
-export function encodeCallScript(actions) {
+function encodeCallScript(actions) {
   return actions.reduce((script, { to, calldata }) => {
     const addr = abi.rawEncode(['address'], [to]).toString('hex')
     const length = abi
@@ -15,7 +15,7 @@ export function encodeCallScript(actions) {
   }, '0x00000001') // spec 1
 }
 
-export function encodeActCall(signature, params) {
+function encodeActCall(signature, params) {
   const sigBytes = web3EthAbi.encodeFunctionSignature(signature)
 
   const types = signature.replace(')', '').split('(')[1]
@@ -28,4 +28,47 @@ export function encodeActCall(signature, params) {
   const paramBytes = web3EthAbi.encodeParameters(types.split(','), params)
 
   return `${sigBytes}${paramBytes.slice(2)}`
+}
+
+const MINT_SIGNATURE = 'mint(address,uint256)'
+const PAYMENT_SIGNATURE = 'newImmediatePayment(address,address,uint256,string)'
+// const BURN_SIGNATURE = 'burn(address,uint256)'
+
+export async function createMintEVMScript(
+  transactionItems,
+  tokenManagerAddress
+) {
+  const calldatum = await Promise.all([
+    ...transactionItems.map(({ address, amount }) =>
+      encodeActCall(MINT_SIGNATURE, [address, amount])
+    ),
+  ])
+
+  const actions = calldatum.map(calldata => ({
+    to: tokenManagerAddress,
+    calldata,
+  }))
+
+  // Encode all actions into a single EVM script.
+  return encodeCallScript(actions)
+}
+
+export async function createTransferEVMScript(payments, financeAppAddress) {
+  const calldatum = await Promise.all(
+    payments.map(({ tokenAddress, receiverAddress, amount, reference = '' }) =>
+      encodeActCall(PAYMENT_SIGNATURE, [
+        tokenAddress,
+        receiverAddress,
+        amount,
+        reference,
+      ])
+    )
+  )
+  const actions = calldatum.map(calldata => ({
+    to: financeAppAddress,
+    calldata,
+  }))
+
+  // Encode all actions into a single EVM script.
+  return encodeCallScript(actions)
 }

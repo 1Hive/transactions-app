@@ -4,11 +4,9 @@ import { useAragonApi } from '@aragon/api-react'
 import { DropDown, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
-import {
-  createMintEVMScript,
-  toDecimals,
-  getTokenHandler,
-} from '../lib/token-utils'
+import { toDecimals, getTokenHandler } from '../lib/token-utils'
+
+import { createMintEVMScript } from '../lib/evmscripts-utils'
 
 import votingAbi from '../abi/Voting.json'
 

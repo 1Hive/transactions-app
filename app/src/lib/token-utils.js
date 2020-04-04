@@ -1,52 +1,5 @@
-import { encodeActCall, encodeCallScript } from './evmscripts-utils'
-
 import tokenManagerAbi from '../abi/TokenManager.json'
 import tokenAbi from '../abi/minimeToken.json'
-
-const MINT_SIGNATURE = 'mint(address,uint256)'
-// const BURN_SIGNATURE = 'burn(address,uint256)'
-
-const PAYMENT_SIGNATURE = 'newImmediatePayment(address,address,uint256,string)'
-
-export async function createMintEVMScript(transactionItems, tokenManagerAddress) {
-  const calldatum = await Promise.all([
-    ...transactionItems.map(({ address, amount }) =>
-      encodeActCall(MINT_SIGNATURE, [address, amount])
-    ),
-  ])
-
-  const actions = calldatum.map(calldata => ({
-    to: tokenManagerAddress,
-    calldata,
-  }))
-
-  // Encode all actions into a single EVM script.
-  const script = encodeCallScript(actions)
-
-  return script
-}
-
-export async function createTransferEVMScript(payments, financeAppAddress) {
-  const calldatum = await Promise.all(
-    payments.map(({ tokenAddress, receiverAddress, amount, reference = '' }) =>
-      encodeActCall(PAYMENT_SIGNATURE, [
-        tokenAddress,
-        receiverAddress,
-        amount,
-        reference,
-      ])
-    )
-  )
-  const actions = calldatum.map(calldata => ({
-    to: financeAppAddress,
-    calldata,
-  }))
-
-  // Encode all actions into a single EVM script.
-  const script = encodeCallScript(actions)
-
-  return script
-}
 
 /**
  * Get the whole and decimal parts from a number.
