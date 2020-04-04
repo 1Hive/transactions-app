@@ -7,7 +7,7 @@ import TransferTab from './components/TransferTab'
 
 const tabs = [
   { name: 'Mint', id: 'mint' },
-  { name: 'Transfer', id: 'transfer' },
+  // { name: 'Transfer', id: 'transfer' },
 ]
 
 const ScreenTab = ({ tabId }) => {
@@ -24,7 +24,7 @@ const ScreenTab = ({ tabId }) => {
 function App() {
   const { appearance } = useGuiStyle()
 
-  const [selectedTab, setSelectedTab] = useState('mint')
+  const [selectedTab, setSelectedTab] = useState(tabs[0].id)
 
   const currentTab = tabs.find(t => t.id === selectedTab) || {}
 
