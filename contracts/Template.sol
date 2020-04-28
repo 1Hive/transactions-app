@@ -81,7 +81,7 @@ contract Template is BaseTemplate, TokenCache {
         (Voting voting, Finance finance) = _setupBaseApps(dao, acl, _holders, _stakes, _votingSettings);
         _createEvmScriptsRegistryPermissions(acl, voting, voting);
         // Setup transactions app
-        _setupCustomApp(dao, acl, voting);
+        _setupCustomApp(dao, acl, voting, finance);
         MiniMeToken token = _createToken("Token 2", "TKN2", TOKEN_DECIMALS);
         _cacheToken(token, msg.sender);
         _setupBaseApps(dao, acl, _holders, _stakes, _votingSettings);
@@ -132,21 +132,23 @@ contract Template is BaseTemplate, TokenCache {
     function _setupCustomApp(
         Kernel _dao,
         ACL _acl,
-        Voting _voting
+        Voting _voting,
+        Finance _finance
     )
         internal
     {
-        Transactions app = _installTransactions(_dao);
+        Transactions app = _installTransactions(_dao, _finance);
         _createTransactionsPermissions(_acl, app, _voting, _voting);
     }
 
     function _installTransactions(
-        Kernel _dao
+        Kernel _dao,
+        Finance _finance
     )
         internal returns (Transactions)
     {
         bytes32 _appId = keccak256(abi.encodePacked(apmNamehash("open"), keccak256("transactions")));
-        bytes memory initializeData = abi.encodeWithSelector(Transactions(0).initialize.selector);
+        bytes memory initializeData = abi.encodeWithSelector(Transactions(0).initialize.selector, address(_finance));
         return Transactions(_installDefaultApp(_dao, _appId, initializeData));
     }
 

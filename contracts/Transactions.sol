@@ -5,7 +5,10 @@ import "@aragon/os/contracts/apps/AragonApp.sol";
 
 contract Transactions is AragonApp {
 
-    function initialize() public onlyInit {
+    address public finance;
+
+    function initialize(address _finance) public onlyInit {
         initialized();
+        finance = _finance;
     }
 }
