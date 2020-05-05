@@ -1,13 +1,8 @@
 {
   "roles": [
     {
-      "name": "Increment the counter",
-      "id": "INCREMENT_ROLE",
-      "params": []
-    },
-    {
-      "name": "Decrement the counter",
-      "id": "DECREMENT_ROLE",
+      "name": "Dummy role",
+      "id": "DUMMY_ROLE",
       "params": []
     }
   ],
