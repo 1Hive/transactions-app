@@ -13,21 +13,15 @@ import votingAbi from '../abi/Voting.json'
 import TransactionGrid from './TransactionGrid'
 import styled from 'styled-components'
 
-const TOKENS = [
-  {
-    symbol: 'ETH',
-    address: '0x0000000000000000000000000000000000000000',
-    decimals: 18,
-  },
-  {
-    symbol: 'TKN',
-    address: '0x862F57eDA3d93dCB6845D5fDc11098e921AFe38c',
-    decimals: 18,
-  },
-]
+const ETH_TOKEN = {
+  symbol: 'ETH',
+  address: '0x0000000000000000000000000000000000000000',
+  decimals: 18,
+}
 
 export default function Transfer() {
-  const { installedApps, api } = useAragonApi()
+  const { installedApps, api, appState } = useAragonApi()
+  const availableTokens = [ETH_TOKEN, ...(appState.tokens || [])]
 
   const [reference, setReference] = useState('')
   const [financeAppIndex, setFinanceApp] = useState(0)
@@ -52,9 +46,9 @@ export default function Transfer() {
       receiverAddress: transactionItem.address,
       amount: toDecimals(
         transactionItem.amount,
-        TOKENS[transactionItem.tokenIndex].decimals
+        availableTokens[transactionItem.tokenIndex].decimals
       ),
-      tokenAddress: TOKENS[transactionItem.tokenIndex].address,
+      tokenAddress: availableTokens[transactionItem.tokenIndex].address,
       reference,
     }))
 
@@ -94,7 +88,7 @@ export default function Transfer() {
           wide
         />
       </Field>
-      <TransactionGrid onSubmit={transferTokens} tokens={TOKENS} />
+      <TransactionGrid onSubmit={transferTokens} tokens={availableTokens} />
     </>
   )
 }
