@@ -8,7 +8,6 @@ export const DEFAULT_TRANSFER = {
 }
 
 export function validateAddresses(addresses) {
-  // TODO per-item errors
   const errors = []
 
   if (addresses.some(address => !isAddress(address)))
@@ -23,10 +22,12 @@ export function validateAddresses(addresses) {
 }
 
 export function validateFormItems(transactionItems) {
-  // TODO per-item errors
   const errors = []
 
-  if (transactionItems.some(({ account }) => !account))
+  if (
+    transactionItems.some(({ account }) => !account) &&
+    transactionItems.length > 1
+  )
     errors.push('Some addresses are empty')
 
   if (

@@ -7,7 +7,7 @@ import TransferTab from './components/TransferTab'
 
 const tabs = [
   { name: 'Mint', id: 'mint' },
-  // { name: 'Transfer', id: 'transfer' },
+  { name: 'Transfer', id: 'transfer' },
 ]
 
 const ScreenTab = ({ tabId }) => {

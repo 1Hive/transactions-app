@@ -56,8 +56,23 @@ function transferItemsReducer(state, { type, payload }) {
     }
     case 'APPEND': {
       const { transactionItems } = payload
+      const prefilledItems = transactionItems.map(item => ({
+        ...item,
+        amount:
+          item.amount !== undefined
+            ? item.amount
+            : state.length > 0
+            ? state[state.length - 1].amount
+            : 0,
+        tokenIndex:
+          item.tokenIndex !== -1
+            ? item.tokenIndex
+            : state.lenght > 0
+            ? state[state.length - 1].tokenIndex
+            : 0,
+      }))
 
-      return [...state, ...transactionItems]
+      return [...state, ...prefilledItems]
     }
     case 'UPDATE': {
       const { transactionItem, updatedTransferItem } = payload
@@ -171,46 +186,37 @@ const TransactionGrid = React.memo(
     }
 
     const handlePaste = transactionItem => pasteData => {
-      try {
-        let parsedItems = csvStringToArray(pasteData)
-        if (parsedItems[0][1] === undefined) {
-          parsedItems = csvStringToArray(pasteData, ',')
-        }
-        if (parsedItems.length === 1 && parsedItems[0].length === 1)
-          return false // data is just a normal string, just skip here and paste in input
+      let parsedItems = csvStringToArray(pasteData)
+      if (parsedItems[0][1] === undefined) {
+        parsedItems = csvStringToArray(pasteData, ',')
+      }
+      if (parsedItems.length === 1 && parsedItems[0].length === 1) {
+        return false // data is just a normal string, just skip here and paste in input
+      }
 
-        if (parsedItems[0].length !== (tokens ? 3 : 2))
-          throw new Error(
-            'CSV rows have invalid length. Should have 2 elements for minting and 3 for token transfer (address, amount[, symbol])'
-          )
+      const appendItems = parsedItems.map(row => ({
+        id: uuidv4(),
+        account: row[0],
+        amount: row[1],
+        tokenIndex:
+          tokens && tokens.findIndex(token => token.symbol === row[2]),
+      }))
+      setTransferItems({
+        type: 'APPEND',
+        payload: {
+          transactionItems: appendItems,
+        },
+      })
 
-        const appendItems = parsedItems.map(row => ({
-          id: uuidv4(),
-          account: row[0],
-          amount: row[1],
-          tokenIndex:
-            tokens && tokens.findIndex(token => token.symbol === row[2]),
-        }))
+      if (transactionItem) {
         setTransferItems({
-          type: 'APPEND',
+          type: 'REMOVE',
           payload: {
-            transactionItems: appendItems,
+            transactionItem,
           },
         })
-
-        if (transactionItem) {
-          setTransferItems({
-            type: 'REMOVE',
-            payload: {
-              transactionItem,
-            },
-          })
-        }
-        return true // confirm we handled the data and that the event propagtion should be stopped
-      } catch (e) {
-        console.error('parse paste invalid', e)
-        return false
       }
+      return true // confirm we handled the data and that the event propagtion should be stopped
     }
 
     const handleImport = data => {
@@ -294,7 +300,7 @@ const TransactionGrid = React.memo(
           mode="strong"
           onClick={handleSubmit}
           wide
-          disabled={errors.length !== 0}
+          disabled={errors.length !== 0 || !transactionItems[0].account}
         >
           Send
         </Button>
@@ -365,7 +371,7 @@ const ErrorMessage = styled.div`
 `
 
 TransactionGrid.propTypes = {
-  tokens: PropTypes.bool,
+  tokens: PropTypes.array,
   onSubmit: PropTypes.func,
 }
 
