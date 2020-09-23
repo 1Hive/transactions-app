@@ -95,6 +95,7 @@ const TransactionRow = React.forwardRef(
         <div>
           <TextInput
             type="number"
+            step="any"
             onChange={handleAmountChange}
             value={amount || ''}
             wide
