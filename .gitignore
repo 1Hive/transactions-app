@@ -6,5 +6,6 @@ ipfs.cmd
 package-lock.json
 coverage.json
 coverage
-
+artifacts
+cache
 .idea
