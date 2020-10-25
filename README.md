@@ -4,7 +4,7 @@
 
 #### 🐲 Project Stage: Mainnet
 
-The Transactions app has been published to `open.aragonpm.eth` on Mainnet and Rinkeby networks. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
+The Transactions app has been published to `open.aragonpm.eth` on Mainnet, Rinkeby, and xDAI networks. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
 
 #### 🚨 Security Review Status: pre-audit
 
@@ -16,7 +16,7 @@ The transactions app does not need any parameter to be initialized.
 
 ## How to run Transactions app locally
 
-First make sure that you have node, npm, and the aragonCLI installed and working. Instructions on how to set that up can be found [here](https://hack.aragon.org/docs/cli-intro.html). You'll also need to have [Metamask](https://metamask.io) or some kind of web wallet enabled to sign transactions in the browser.
+First make sure that you have node and yarn installed and working. You'll also need to have [Metamask](https://metamask.io) or some kind of web wallet enabled to sign transactions in the browser.
 
 Git clone this repo.
 
@@ -33,13 +33,13 @@ cd transactions-app
 Install npm dependencies.
 
 ```sh
-npm i
+yarn
 ```
 
-Deploy a dao with Token Manager and Voting apps installed on your local environment.
+Deploy a dao with Token Manager, Voting, and Finance apps installed on your local environment.
 
 ```sh
-npm run start:ipfs:template
+yarn start
 ```
 
 ## How to deploy to an organization
@@ -56,7 +56,7 @@ env="--environment aragon:mainnet --ipfs-rpc https://ipfs.eth.aragon.network/ipf
 dao=<your_dao_address>
 
 # set a variable for the voting app
-voting=0x35b74057a93280eb57f9863298f6a6908b38898a
+voting=<your-voting-app-address>
 
 # install the app to the DAO
 aragon dao install $dao transactions.open.aragonpm.eth $env
@@ -90,6 +90,6 @@ We welcome community contributions!
 
 Please check out our [open Issues](https://github.com/1Hive/transactions-app/issues) to get started.
 
-If you discover something that could potentially impact security, please notify us immediately. The quickest way to reach us is via the #dev channel in our [team Keybase chat](https://1hive.org/contribute/keybase). Just say hi and that you discovered a potential security vulnerability and we'll DM you to discuss details.
+If you discover something that could potentially impact security, please notify us immediately. The quickest way to reach us is via the #dev channel in our [Discord chat](https://discord.gg/mP75t4n). Just say hi and that you discovered a potential security vulnerability and we'll DM you to discuss details.
 
 <br />
