@@ -36,7 +36,7 @@ const TransactionRow = React.forwardRef(
       event => {
         onUpdate({
           ...transactionItem,
-          amount: parseFloat(event.target.value, 10),
+          amount: event.target.value,
         })
       },
       [onUpdate, transactionItem]
