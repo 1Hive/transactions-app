@@ -32,7 +32,7 @@ export function validateFormItems(transactionItems) {
 
   if (
     transactionItems.some(
-      ({ amount }) => isNaN(amount) || amount === null || amount === 0
+      ({ amount }) => isNaN(parseFloat(amount)) || parseFloat(amount) === 0
     )
   ) {
     errors.push('Some balances are invalid.')
