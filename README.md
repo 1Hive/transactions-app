@@ -2,7 +2,7 @@
 
 1Hive's Transactions app allows users to create a vote with multiple token mintings or token transfers.
 
-#### 🐲 Project Stage: Mainnet
+#### 🐲 Project Stage: Mainnet and xDAI
 
 The Transactions app has been published to `open.aragonpm.eth` on Mainnet, Rinkeby, and xDAI networks. If you are interested in contributing please see our [open issues](https://github.com/1hive/transactions-app).
 
@@ -44,9 +44,16 @@ yarn start
 
 ## How to deploy to an organization
 
-Transactions app are published to APM on Mainnet and Rinkeby at `transactions.open.aragonpm.eth`
+Transactions app are published to APM on Mainnet, Rinkeby, and xDAI at `transactions.open.aragonpm.eth`. You can use the [1Hive installer](https://installer.1hive.org/) to install it on a DAO.
 
-To deploy to an Aragon DAO you can use the [Aragon CLI](https://hack.aragon.org/docs/cli-intro.html), and follow these steps.
+Alternatively, to install the app on an Aragon DAO you can use the Aragon Client embedded console. You can enable it in Global Preferences > Help and feedback.
+
+In the console, you can install the application with the following command:
+```
+install/transactions.open/()/DUMMY_ROLE:0x0000000000000000000000000000000000000001:0x0000000000000000000000000000000000000001
+```
+
+Yet, if you are nostalgic, you can install the app using the [Aragon CLI](https://hack.aragon.org/docs/cli-intro.html) following these steps.
 
 ```
 # setup your environment
