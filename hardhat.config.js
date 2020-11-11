@@ -1,10 +1,10 @@
-const { usePlugin } = require('@nomiclabs/buidler/config')
-const hooks = require('./scripts/buidler-hooks')
+const { usePlugin } = require('hardhat/config')
+const hooks = require('./scripts/hardhat-hooks')
 
-usePlugin('@aragon/buidler-aragon')
-usePlugin('@nomiclabs/buidler-solhint')
-usePlugin('buidler-gas-reporter')
-usePlugin('solidity-coverage')
+require('@aragon/buidler-aragon')
+require('@nomiclabs/hardhat-solhint')
+require('hardhat-gas-reporter')
+require('solidity-coverage')
 
 const ACCOUNTS = (process.env.ETH_KEYS ? process.env.ETH_KEYS.split(',') : [])
   .map(key => key.trim())
@@ -41,7 +41,7 @@ module.exports = {
     // to have Frame running on your machine. Download it from:
     // https://frame.sh
     frame: {
-      httpHeaders: { origin: 'buidler' },
+      httpHeaders: { origin: 'hardhat' },
       url: 'http://localhost:1248',
     },
     // xDAI network configured with Aragon node.
@@ -54,10 +54,12 @@ module.exports = {
   },
   solc: {
     version: '0.4.24',
-    optimizer: {
+    settings: {
+     optimizer: {
       enabled: true,
       runs: 10000,
     },
+  }
   },
   gasReporter: {
     enabled: !!process.env.GAS_REPORTER,
