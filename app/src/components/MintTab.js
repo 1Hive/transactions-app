@@ -4,7 +4,7 @@ import { useAragonApi } from '@aragon/api-react'
 import { DropDown, textStyle } from '@aragon/ui'
 import LocalAppBadge from '../components/LocalIdentityBadge/LocalAppBadge'
 
-import { toDecimals, getTokenHandler } from '../lib/token-utils'
+import { toDecimals, getTokenHandler, isNegative, absoluteNum } from '../lib/token-utils'
 
 import { createMintEVMScript } from '../lib/evmscripts-utils'
 
@@ -34,7 +34,7 @@ export default function Mint() {
     const decimals = await tokenHandler.decimals().toPromise()
     const mintings = transactionItems.map(item => ({
       address: item.address,
-      amount: toDecimals(item.amount, decimals),
+      amount: (isNegative(item.amount) ? '-' : '') + toDecimals(absoluteNum(item.amount), decimals),
     }))
     console.log(transactionItems, mintings)
 
@@ -45,7 +45,7 @@ export default function Mint() {
     )
 
     return new Promise((resolve, reject) => {
-      votingHandler.newVote(evmScript, 'Mint Tokens').subscribe(() => {
+      votingHandler.newVote(evmScript, 'Mint / Burn Tokens').subscribe(() => {
         resolve()
       })
     })

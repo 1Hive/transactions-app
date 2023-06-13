@@ -46,6 +46,14 @@ function splitDecimalNumber(num) {
   ]
 }
 
+export function isNegative(num) {
+  return num.startsWith('-');
+}
+
+export function absoluteNum(num) {
+  return isNegative(num) ? num.substring(1) : num;
+}
+
 /**
  * Format the number to be in a given decimal base
  *

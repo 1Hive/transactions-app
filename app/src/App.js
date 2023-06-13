@@ -6,7 +6,7 @@ import MintTab from './components/MintTab'
 import TransferTab from './components/TransferTab'
 
 const tabs = [
-  { name: 'Mint', id: 'mint' },
+  { name: 'Mint / Burn', id: 'mint' },
   { name: 'Transfer', id: 'transfer' },
 ]
 

@@ -1,5 +1,6 @@
 import abi from 'ethereumjs-abi'
 import web3EthAbiUntyped from 'web3-eth-abi'
+import { absoluteNum, isNegative } from './token-utils'
 
 const web3EthAbi = web3EthAbiUntyped
 
@@ -32,7 +33,7 @@ function encodeActCall(signature, params) {
 
 const MINT_SIGNATURE = 'mint(address,uint256)'
 const PAYMENT_SIGNATURE = 'newImmediatePayment(address,address,uint256,string)'
-// const BURN_SIGNATURE = 'burn(address,uint256)'
+const BURN_SIGNATURE = 'burn(address,uint256)'
 
 export async function createMintEVMScript(
   transactionItems,
@@ -40,7 +41,7 @@ export async function createMintEVMScript(
 ) {
   const calldatum = await Promise.all([
     ...transactionItems.map(({ address, amount }) =>
-      encodeActCall(MINT_SIGNATURE, [address, amount])
+      encodeActCall(isNegative(amount) ? BURN_SIGNATURE : MINT_SIGNATURE, [address, absoluteNum(amount)])
     ),
   ])
 
